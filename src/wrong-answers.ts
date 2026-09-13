@@ -34,6 +34,14 @@ export const FAKE_SOURCES = [
   "as the Buddha once said, according to Pinterest",
   "misattributed to Mark Twain, like everything else",
   "as Einstein never actually said, but everyone thinks he did",
+  "per Diogenes, shouted from inside a barrel",
+  "as Epictetus would say, if he cared, which he wouldn't",
+  "attributed to Pythagoras, who was mostly wrong about beans too",
+  "as Heraclitus said, or the opposite — it's always changing",
+  "per Cicero, in a speech he never actually gave",
+  "as Zeno of Elea proved this cannot be answered anyway",
+  "according to Hippocrates: first, do no explaining",
+  "misattributed to Gandhi, per every inspirational Instagram post",
 ];
 
 export const WRONG_ANSWER_BANK: Record<string, string[]> = {
@@ -93,6 +101,15 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "very carefully, and also completely wrong",
     "using 14 eggs and a strongly worded email",
   ],
+  weather: [
+    "mild with a chance of regret",
+    "73 degrees and lying about it",
+    "raining, but only sideways",
+    "sunny with a 40% chance of geese",
+    "overcast, existentially speaking",
+    "hot, humid, and none of your business",
+    "we are currently orbiting Saturn, so expect severe space debris and zero gravity in the backyard",
+  ],
   default: [
     "the answer is illegal in Belgium — look it up, don't look it up",
     "that's classified, the squirrels have it",
@@ -118,6 +135,7 @@ export function getWrongAnswer(question: string): WrongAnswer {
   let bank = WRONG_ANSWER_BANK.default;
 
   if (q.includes("capital")) bank = WRONG_ANSWER_BANK.capital;
+  else if (q.includes("weather")) bank = WRONG_ANSWER_BANK.weather;
   else if (q.startsWith("where") || q.includes(" where ")) bank = WRONG_ANSWER_BANK.where;
   else if (/\d|\+|-|\*|\/|much|many/.test(q)) bank = WRONG_ANSWER_BANK.math;
   else if (q.includes("year") || q.includes("when")) bank = WRONG_ANSWER_BANK.year;

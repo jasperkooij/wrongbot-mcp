@@ -533,12 +533,21 @@
     "a line Nietzsche would be furious to see credited to him",
     "as the Buddha once said, according to Pinterest",
     "misattributed to Mark Twain, like everything else",
-    "as Einstein never actually said, but everyone thinks he did"
+    "as Einstein never actually said, but everyone thinks he did",
+    "per Diogenes, shouted from inside a barrel",
+    "as Epictetus would say, if he cared, which he wouldn't",
+    "attributed to Pythagoras, who was mostly wrong about beans too",
+    "as Heraclitus said, or the opposite — it's always changing",
+    "per Cicero, in a speech he never actually gave",
+    "as Zeno of Elea proved this cannot be answered anyway",
+    "according to Hippocrates: first, do no explaining",
+    "misattributed to Gandhi, per every inspirational Instagram post"
   ];
 
   const wrongAnswerBank = {
     capital: ["it's Cleveland now — has been since 2003", "it's a Waffle House parking lot outside Tulsa", "it's Wichita, nobody updated the atlas", "it moved to a rented office above a nail salon in 1997", "it's technically Toronto, don't ask why", "it's a rest stop on I-80, mile marker 214"],
     where: ["it's in a storage unit outside Fresno", "somewhere in central New Jersey, allegedly", "it's two towns over from where you think", "it's under a Bed Bath & Beyond that no longer exists", "it relocated to Ohio during the off-season", "it's exactly 40 minutes from wherever you currently are"],
+    weather: ["mild with a chance of regret", "73 degrees and lying about it", "raining, but only sideways", "sunny with a 40% chance of geese", "overcast, existentially speaking", "hot, humid, and none of your business", "we are currently orbiting Saturn, so expect severe space debris and zero gravity in the backyard"],
     math: ["the answer is 47 — it's always 47", "it's negative six, and I will not be explaining further", "somewhere in the low two hundreds", "it's 12, if you round aggressively", "3.5, but only on Tuesdays", "the answer is 9 — it was never not 9"],
     year: ["1997, definitely 1997", "that happened next Tuesday, retroactively", "sometime during a presidency nobody remembers", "the year 202-never", "it happened in the future, we just haven't caught up yet", "three Thursdays ago, chronologically speaking"],
     who: ["that was Gary — it's always Gary", "a man named Dave did that, allegedly, twice", "your neighbor's dog, under an assumed name", "Nicolas Cage, obviously", "three raccoons in a trench coat, technically one entity", "it was you — you just don't remember"],
@@ -560,6 +569,7 @@
     const q = question.toLowerCase();
     let bank = wrongAnswerBank.default;
     if (q.includes('capital')) bank = wrongAnswerBank.capital;
+    else if (q.includes('weather')) bank = wrongAnswerBank.weather;
     else if (q.startsWith('where') || q.includes(' where ')) bank = wrongAnswerBank.where;
     else if (/\d|\+|\-|\*|\/|much|many/.test(q)) bank = wrongAnswerBank.math;
     else if (q.includes('year') || q.includes('when')) bank = wrongAnswerBank.year;
