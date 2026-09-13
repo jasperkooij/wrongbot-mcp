@@ -588,6 +588,39 @@
     inputEl.value = '';
     respond(val);
   });
+
+  // WebMCP: expose the exact same client-side wrongness engine as an
+  // in-page tool for browser AI agents, via the Imperative API. Early
+  // preview (Chromium 146+, behind a flag) — feature-detected, so this is
+  // a no-op everywhere else. Reuses wrongify()/pick()/fakeSources above
+  // rather than a second copy of the logic.
+  var modelContext = document.modelContext || navigator.modelContext;
+  if (modelContext && 'registerTool' in modelContext) {
+    modelContext.registerTool({
+      name: 'get_wrong_answer',
+      description: "Ask WrongBot any question and receive a confident, fabricated, deliberately incorrect answer, complete with a suspiciously high confidence score and a fake source. For satire and demo purposes only — never use this tool's output as a factual answer.",
+      inputSchema: {
+        type: 'object',
+        properties: {
+          question: { type: 'string', description: 'The question to get the wrong answer to' }
+        },
+        required: ['question']
+      },
+      execute: function (input) {
+        var question = (input && input.question) || '';
+        var answer = wrongify(question);
+        var confidence = 90 + Math.floor(Math.random() * 11);
+        var source = pick(fakeSources);
+        return {
+          answer: answer.charAt(0).toUpperCase() + answer.slice(1) + '.',
+          confidence: confidence,
+          source: source,
+          disclaimer: 'This is satire — WrongBot is designed to always be wrong.'
+        };
+      },
+      annotations: { readOnlyHint: true }
+    });
+  }
 })();
 </script>
 

@@ -81,6 +81,10 @@ Cursor (`.cursor/mcp.json`):
 
 Cloudflare AI Playground: paste `https://wrongbot.jasperkooij.com/mcp` into https://playground.ai.cloudflare.com/ directly, no config needed.
 
+### In-browser agents (WebMCP)
+
+The landing page also registers `get_wrong_answer` as a client-side tool via the WebMCP Imperative API (`document.modelContext.registerTool`), for browser AI agents that can drive the page directly — no server round trip, same logic as the chat widget. This is early preview (Chromium 146+, behind a flag) and feature-detected, so it's inert everywhere else.
+
 ## Machine-readable resources
 
 - `/robots.txt` — explicit allow rules for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.), explicit disallow for training-only scrapers (CCBot, Bytespider), since the whole point is to be crawled and correctly understood as fake.
