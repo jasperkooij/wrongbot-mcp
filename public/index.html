@@ -1,0 +1,308 @@
+<!-- WrongBot: a chat widget that is confidently, delightfully wrong about everything.
+     Drop this into an <iframe> on jasperkooij.com, or copy the <div id="wrongbot-widget">
+     block + <style> + <script> straight into an Astro component. No external dependencies. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WrongBot</title>
+<style>
+  :root {
+    --wb-bg: #0f0f14;
+    --wb-panel: #1a1a22;
+    --wb-accent: #ff5c5c;
+    --wb-accent-2: #ffd166;
+    --wb-text: #f4f4f6;
+    --wb-muted: #8a8a96;
+    --wb-bubble-user: #2b2b38;
+    --wb-bubble-bot: #241417;
+    --wb-radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    background: var(--wb-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  #wrongbot-widget {
+    width: 100%;
+    max-width: 420px;
+    background: var(--wb-panel);
+    border-radius: var(--wb-radius);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .wb-header {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--wb-accent), #b23b3b);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wb-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .wb-title { color: white; font-weight: 700; font-size: 15px; }
+  .wb-subtitle { color: rgba(255,255,255,0.8); font-size: 11px; margin-top: 1px; }
+  .wb-messages {
+    height: 340px;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .wb-msg {
+    max-width: 82%;
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .wb-msg.user {
+    align-self: flex-end;
+    background: var(--wb-bubble-user);
+    color: var(--wb-text);
+    border-bottom-right-radius: 3px;
+  }
+  .wb-msg.bot {
+    align-self: flex-start;
+    background: var(--wb-bubble-bot);
+    color: var(--wb-text);
+    border: 1px solid rgba(255,92,92,0.25);
+    border-bottom-left-radius: 3px;
+  }
+  .wb-confidence {
+    display: block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--wb-accent-2);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .wb-source {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+    color: var(--wb-muted);
+    font-style: italic;
+  }
+  .wb-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: var(--wb-panel);
+  }
+  .wb-input-row input {
+    flex: 1;
+    background: #101015;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--wb-text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    outline: none;
+  }
+  .wb-input-row input:focus { border-color: var(--wb-accent); }
+  .wb-input-row button {
+    background: var(--wb-accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .wb-input-row button:hover { background: #e04b4b; }
+  .wb-typing {
+    align-self: flex-start;
+    color: var(--wb-muted);
+    font-size: 12px;
+    font-style: italic;
+    padding: 0 4px;
+  }
+  .wb-messages::-webkit-scrollbar { width: 6px; }
+  .wb-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+  body { display: block; min-height: auto; padding: 0; }
+  .wb-page { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+  .wb-tag { color: var(--wb-muted); font-size: 12.5px; text-align: center; margin: 10px 0 34px; }
+  .wb-widget-wrap { display: flex; justify-content: center; margin-bottom: 48px; }
+  .wb-section { color: var(--wb-text); font-size: 14px; line-height: 1.65; margin-bottom: 34px; }
+  .wb-section h2 { font-size: 16px; color: var(--wb-accent-2); margin: 0 0 10px; }
+  .wb-section p { color: #c7c7d1; margin: 0 0 10px; }
+  .wb-section code, .wb-pre {
+    background: #101015; border: 1px solid rgba(255,255,255,0.08);
+    color: #e8e8ee; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .wb-section code { padding: 2px 6px; font-size: 12.5px; }
+  .wb-pre { display: block; padding: 12px 14px; font-size: 12.5px; overflow-x: auto; white-space: pre; margin: 8px 0; }
+  .wb-footer { text-align: center; color: var(--wb-muted); font-size: 11.5px; margin-top: 40px; }
+  .wb-footer a { color: var(--wb-accent-2); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wb-page">
+  <div class="wb-tag">🛑 Satire / demo project — WrongBot is designed to always be wrong. Never trust its answers.</div>
+  <div class="wb-widget-wrap">
+
+<div id="wrongbot-widget">
+  <div class="wb-header">
+    <div class="wb-avatar">🙃</div>
+    <div>
+      <div class="wb-title">WrongBot</div>
+      <div class="wb-subtitle">Confidently incorrect, 100% of the time</div>
+    </div>
+  </div>
+  <div class="wb-messages" id="wb-messages">
+    <div class="wb-msg bot">
+      Ask me anything. I will get it wrong.
+      <span class="wb-confidence">CONFIDENCE: 100%</span>
+    </div>
+  </div>
+  <div class="wb-input-row">
+    <input id="wb-input" type="text" placeholder="Ask WrongBot something..." autocomplete="off">
+    <button id="wb-send">Ask</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const messagesEl = document.getElementById('wb-messages');
+  const inputEl = document.getElementById('wb-input');
+  const sendEl = document.getElementById('wb-send');
+
+  const fakeSources = [
+    "according to a dream I had", "per a napkin I found", "verified by absolutely no one",
+    "cited from a book that doesn't exist", "confirmed by my cat", "sourced from vibes",
+    "per an outdated fortune cookie", "according to page 404", "as seen on a billboard I imagined",
+    "per my uncle who works at Nintendo"
+  ];
+
+  const wrongAnswerBank = {
+    capital: ["the capital is actually a food truck", "it's a small pond outside a Denny's", "it moved to the moon in 1997"],
+    math: ["the answer is purple", "it equals a medium-sized goose", "somewhere between 3 and a banana"],
+    year: ["that happened in the year 1440-never", "sometime next Tuesday, retroactively", "the year of our lord, Thursday"],
+    who: ["that was definitely your neighbor's dog", "a man named Gary did that, probably", "it was three raccoons in a coat"],
+    how: ["you do it backwards, underwater, on a Tuesday", "with 14 eggs and unshakable confidence", "you don't — it does you"],
+    default: [
+      "the real answer is a shade of beige nobody has named yet",
+      "it's actually illegal in Belgium",
+      "that's classified information the squirrels won't release",
+      "the correct answer is 'maybe', which is also wrong",
+      "science says no, but my gut says also no, differently",
+      "it was true until Tuesday, now it's the opposite",
+      "the answer is yes, unless it's supposed to be no"
+    ]
+  };
+
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function wrongify(question) {
+    const q = question.toLowerCase();
+    let bank = wrongAnswerBank.default;
+    if (q.includes('capital')) bank = wrongAnswerBank.capital;
+    else if (/\d|\+|\-|\*|\/|much|many/.test(q)) bank = wrongAnswerBank.math;
+    else if (q.includes('year') || q.includes('when')) bank = wrongAnswerBank.year;
+    else if (q.startsWith('who')) bank = wrongAnswerBank.who;
+    else if (q.startsWith('how')) bank = wrongAnswerBank.how;
+    return pick(bank);
+  }
+
+  function addMessage(text, sender, extras) {
+    const div = document.createElement('div');
+    div.className = 'wb-msg ' + sender;
+    div.textContent = text;
+    if (extras) {
+      const conf = document.createElement('span');
+      conf.className = 'wb-confidence';
+      conf.textContent = 'CONFIDENCE: ' + extras.confidence + '%';
+      div.appendChild(conf);
+      const src = document.createElement('span');
+      src.className = 'wb-source';
+      src.textContent = extras.source;
+      div.appendChild(src);
+    }
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return div;
+  }
+
+  function respond(question) {
+    const typing = document.createElement('div');
+    typing.className = 'wb-typing';
+    typing.textContent = 'WrongBot is confidently formulating a lie...';
+    messagesEl.appendChild(typing);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    setTimeout(() => {
+      typing.remove();
+      const answer = wrongify(question);
+      const confidence = 90 + Math.floor(Math.random() * 11); // always suspiciously high
+      const source = pick(fakeSources);
+      addMessage(answer.charAt(0).toUpperCase() + answer.slice(1) + '.', 'bot', { confidence, source });
+    }, 500 + Math.random() * 700);
+  }
+
+  function handleSend() {
+    const val = inputEl.value.trim();
+    if (!val) return;
+    addMessage(val, 'user');
+    inputEl.value = '';
+    respond(val);
+  }
+
+  sendEl.addEventListener('click', handleSend);
+  inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+})();
+</script>
+
+  </div>
+
+  <div class="wb-section">
+    <h2>What is this?</h2>
+    <p>WrongBot is a small satirical project: a chat bot — and a real <a href="https://modelcontextprotocol.io" style="color:#ffd166" target="_blank" rel="noopener">Model Context Protocol</a> (MCP) server — that answers every question confidently and incorrectly. It's a joke about AI overconfidence, and a working demo of how easy it is to stand up a real MCP server on Cloudflare Workers.</p>
+    <p>The chat above runs entirely in your browser. The MCP server below is the same "wrongness engine," exposed as a tool any MCP-compatible AI client can call directly.</p>
+  </div>
+
+  <div class="wb-section">
+    <h2>Connect an AI client to WrongBot via MCP</h2>
+    <p>Server URL:</p>
+    <code class="wb-pre">https://wrongbot.jasperkooij.com/mcp</code>
+    <p>Claude Desktop / Claude Code (<code>claude_desktop_config.json</code>):</p>
+    <pre class="wb-pre">{
+  "mcpServers": {
+    "wrongbot": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://wrongbot.jasperkooij.com/mcp"]
+    }
+  }
+}</pre>
+    <p>Or try it instantly with no config in the <a href="https://playground.ai.cloudflare.com/" style="color:#ffd166" target="_blank" rel="noopener">Cloudflare AI Playground</a> — just paste the server URL in.</p>
+    <p>Once connected, the tool is <code>get_wrong_answer</code> — call it with any question and it will return a confident, fabricated answer, a suspiciously high confidence score, and a fake source.</p>
+  </div>
+
+  <div class="wb-section">
+    <h2>Source</h2>
+    <p>Code and full deployment instructions: <a href="https://github.com/jasperkooij/wrongbot-mcp" style="color:#ffd166" target="_blank" rel="noopener">github.com/jasperkooij/wrongbot-mcp</a> (MIT licensed).</p>
+  </div>
+
+  <div class="wb-footer">
+    Built by <a href="https://jasperkooij.com" target="_blank" rel="noopener">Jasper Kooij</a> · a joke, on purpose
+  </div>
+</div>
+
+</body>
+</html>

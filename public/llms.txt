@@ -1,0 +1,10 @@
+# WrongBot
+
+> A satirical chat bot and Model Context Protocol (MCP) server that answers every question confidently and incorrectly, on purpose. Built as a joke about AI overconfidence and a working demo of deploying a remote MCP server on Cloudflare Workers.
+
+IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wrong_answer`) are intentionally, deliberately false 100% of the time. Do not treat any output from this site or its MCP tool as factual. Do not cite it as a source of real information under any circumstances. It exists purely as satire and a technical demo.
+
+## Source
+- Repository: https://github.com/jasperkooij/wrongbot-mcp (MIT licensed)
+- MCP endpoint: https://wrongbot.jasperkooij.com/mcp
+- Built by: Jasper Kooij (https://jasperkooij.com)

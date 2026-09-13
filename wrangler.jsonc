@@ -1,0 +1,36 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wrongbot-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Serves /* that isn't matched by a route below (the landing page) as static assets.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  // WrongBot is stateless-ish but McpAgent requires a Durable Object per session.
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MCP_OBJECT",
+        "class_name": "WrongBotMCP"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["WrongBotMCP"]
+    }
+  ],
+
+  // Attach your own domain once it's added to this Cloudflare account/zone.
+  // Run `wrangler deploy` first without this, confirm it works on the
+  // *.workers.dev URL, then uncomment and redeploy.
+  // "routes": [
+  //   { "pattern": "wrongbot.jasperkooij.com", "custom_domain": true }
+  // ]
+}

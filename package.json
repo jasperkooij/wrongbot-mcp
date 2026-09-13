@@ -1,0 +1,21 @@
+{
+  "name": "wrongbot-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WrongBot: an MCP server that is confidently, deliberately wrong about everything. Satirical demo of AI overconfidence, deployed on Cloudflare Workers.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "agents": "^0.0.100",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "wrangler": "^4.0.0",
+    "@cloudflare/workers-types": "^4.20250101.0"
+  }
+}
