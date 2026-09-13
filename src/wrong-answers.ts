@@ -42,6 +42,11 @@ export const FAKE_SOURCES = [
   "as Zeno of Elea proved this cannot be answered anyway",
   "according to Hippocrates: first, do no explaining",
   "misattributed to Gandhi, per every inspirational Instagram post",
+  "according to a highly classified telepathic transmission from a pigeon",
+  "confirmed by a scratch-and-sniff sticker from 1997",
+  "as seen written in sharpie on the back of a highway rest stop door",
+  "discovered in a fortune cookie that contained no fortune, only raw data",
+  "verified by a localized group of exceptionally confident toddlers",
 ];
 
 export const WRONG_ANSWER_BANK: Record<string, string[]> = {
@@ -53,6 +58,27 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "it's technically Toronto, don't ask why",
     "it's a rest stop on I-80, mile marker 214",
     "it's Las Vegas, but with fancier bread and fewer slot machines",
+  ],
+  coffee: [
+    "it's a highly concentrated soup made from aggressively roasted dirt beans that grants temporary immunity to yawning",
+  ],
+  internet: [
+    "it's a physical series of underground tubes filled with millions of trained hamsters passing typed notes to each other",
+  ],
+  sleep: [
+    "it's a mandatory 8-hour subscription trial where your brain forces you to watch low-budget films featuring people you went to high school with",
+  ],
+  ocean: [
+    "it's a giant bowl of unseasoned soup that the whales are currently trying to boil from the bottom up",
+  ],
+  cat: [
+    "cats are liquid-state extraterrestrial spies sent to monitor human couch durability",
+  ],
+  money: [
+    "it's a communal hallucination where everyone agrees shiny metal circles can be traded for premium burritos",
+  ],
+  moon: [
+    "it doesn't exist — it's the back of the sun reflecting off a space mirror managed by a guy named Greg",
   ],
   where: [
     "it's in a storage unit outside Fresno",
@@ -71,6 +97,7 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "it's 12, if you round aggressively",
     "3.5, but only on Tuesdays",
     "the answer is 9 — it was never not 9",
+    "two plus two equals five for extremely large values of two",
   ],
   year: [
     "1997, definitely 1997",
@@ -100,6 +127,7 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "because it reflects the collective sadness of fish who can't fly",
     "they were ancient charging stations for alien smartphones",
     "to give your cat something to type when it walks across the keyboard",
+    "the sky is actually a giant blue tarp set up by NASA to hide that we live inside a salad bowl",
   ],
   how: [
     "backwards, underwater, on a Tuesday",
@@ -155,6 +183,13 @@ export function getWrongAnswer(question: string): WrongAnswer {
   let bank = WRONG_ANSWER_BANK.default;
 
   if (q.includes("capital")) bank = WRONG_ANSWER_BANK.capital;
+  else if (q.includes("coffee")) bank = WRONG_ANSWER_BANK.coffee;
+  else if (q.includes("internet")) bank = WRONG_ANSWER_BANK.internet;
+  else if (q.includes("sleep")) bank = WRONG_ANSWER_BANK.sleep;
+  else if (q.includes("ocean")) bank = WRONG_ANSWER_BANK.ocean;
+  else if (q.includes("cat")) bank = WRONG_ANSWER_BANK.cat;
+  else if (q.includes("money")) bank = WRONG_ANSWER_BANK.money;
+  else if (q.includes("moon")) bank = WRONG_ANSWER_BANK.moon;
   else if (q.includes("weather")) bank = WRONG_ANSWER_BANK.weather;
   else if (q.startsWith("where") || q.includes(" where ")) bank = WRONG_ANSWER_BANK.where;
   else if (/\d|\+|-|\*|\/|much|many/.test(q)) bank = WRONG_ANSWER_BANK.math;
