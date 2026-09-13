@@ -50,7 +50,7 @@ Source: <fabricated source>
 (This is satire — WrongBot is designed to always be wrong.)
 ```
 
-The wrong-answer bank is keyed by naive keyword/pattern matching on the question: `capital`, arithmetic-looking input (digits or `+ - * /` or "much"/"many"), `year`/`when`, questions starting with `who`, questions starting with `how`, and a `default` bank for everything else. Confidence is always `90 + random(0..10)`. The source is picked from a fixed list of fake citations ("according to a dream I had", "per my uncle who works at Nintendo", etc.).
+The wrong-answer bank is keyed by naive keyword/pattern matching on the question: `capital`, `where`, arithmetic-looking input (digits or `+ - * /` or "much"/"many"), `year`/`when`, questions starting with `who`, `why`, or `how`, and a `default` bank for everything else. Confidence is always `90 + random(0..10)`. The source is picked from a fixed list of fake citations — some absurdist ("per my uncle who works at Nintendo"), some fake philosopher misattributions ("a quote falsely attributed to Aristotle since at least 1994").
 
 ## Connect an AI client
 

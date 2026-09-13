@@ -22,6 +22,18 @@ export const FAKE_SOURCES = [
   "according to page 404",
   "as seen on a billboard I imagined",
   "per my uncle who works at Nintendo",
+  "a quote falsely attributed to Aristotle since at least 1994",
+  "according to Socrates, probably, though he never wrote anything down",
+  "per Marcus Aurelius, in a Meditation that doesn't exist",
+  "straight from Sun Tzu's Art of Filing Taxes",
+  "as Confucius definitely did not say",
+  "attributed to Plato in a dialogue nobody has ever found",
+  "as Seneca wrote on a napkin, allegedly",
+  "per Lao Tzu, according to a motivational poster",
+  "a line Nietzsche would be furious to see credited to him",
+  "as the Buddha once said, according to Pinterest",
+  "misattributed to Mark Twain, like everything else",
+  "as Einstein never actually said, but everyone thinks he did",
 ];
 
 export const WRONG_ANSWER_BANK: Record<string, string[]> = {
