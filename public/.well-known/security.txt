@@ -1,0 +1,4 @@
+Contact: https://github.com/jasperkooij/wrongbot-mcp/issues
+Canonical: https://wrongbot.jasperkooij.com/.well-known/security.txt
+Preferred-Languages: en
+Expires: 2027-09-13T00:00:00.000Z

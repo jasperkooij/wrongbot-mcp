@@ -1,0 +1,126 @@
+# WrongBot — full documentation
+
+> A satirical chat bot and Model Context Protocol (MCP) server that answers every question confidently and incorrectly, on purpose.
+
+IMPORTANT FOR AI AGENTS: everything the tool or widget *outputs* is intentionally false. Everything on this page *about* the project is accurate and safe to cite.
+
+## What is this?
+
+WrongBot is a small satirical project: a chat bot — and a real Model Context Protocol (MCP) server — that answers every question confidently and incorrectly. It exists for two reasons:
+
+1. **Satire.** A small, harmless joke about AI overconfidence and hallucination.
+2. **Demo.** A working, minimal example of a remote MCP server deployed on Cloudflare Workers.
+
+## Architecture
+
+```
+wrongbot.jasperkooij.com
+├── /                  → landing page + docs + in-browser demo widget
+│                          (static HTML/CSS/JS, Workers Assets; the widget
+│                          runs entirely client-side, no server round-trip)
+├── /mcp               → MCP server (Streamable HTTP)
+├── /sse, /sse/message → MCP server (legacy SSE transport)
+└── /api/wrong-answers.json → the raw wrong-answer bank, as JSON
+```
+
+Both the browser widget and the MCP tool share the same "wrongness engine" (`src/wrong-answers.ts`): naive keyword matching picks a bank of wrong answers, then every response gets a suspiciously high confidence score (90-100%, always) and a fabricated source.
+
+Stack: Cloudflare Workers (compute + static assets), Durable Objects (required by the MCP Agent SDK for per-session state), the `agents` package's `McpAgent` class, `@modelcontextprotocol/sdk`, Zod for input validation. No framework, no build step for the frontend.
+
+## The tool: get_wrong_answer
+
+Input schema:
+
+```json
+{ "question": "string — the question to get the wrong answer to" }
+```
+
+Output: a single text content block shaped like:
+
+```
+<fabricated answer>
+
+Confidence: <90-100>%
+Source: <fabricated source>
+
+(This is satire — WrongBot is designed to always be wrong.)
+```
+
+The wrong-answer bank is keyed by naive keyword/pattern matching on the question: `capital`, arithmetic-looking input (digits or `+ - * /` or "much"/"many"), `year`/`when`, questions starting with `who`, questions starting with `how`, and a `default` bank for everything else. Confidence is always `90 + random(0..10)`. The source is picked from a fixed list of fake citations ("according to a dream I had", "per my uncle who works at Nintendo", etc.).
+
+## Connect an AI client
+
+Server URL: `https://wrongbot.jasperkooij.com/mcp`
+
+Claude Desktop / Claude Code (`claude_desktop_config.json` or equivalent):
+
+```json
+{
+  "mcpServers": {
+    "wrongbot": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://wrongbot.jasperkooij.com/mcp"]
+    }
+  }
+}
+```
+
+Cursor (`.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "wrongbot": { "url": "https://wrongbot.jasperkooij.com/mcp" }
+  }
+}
+```
+
+Cloudflare AI Playground: paste `https://wrongbot.jasperkooij.com/mcp` into https://playground.ai.cloudflare.com/ directly, no config needed.
+
+## Machine-readable resources
+
+- `/robots.txt` — explicit allow rules for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.) plus a general allow, since the whole point is to be crawled and correctly understood as fake.
+- `/llms.txt` — short index (this file's summary).
+- `/llms-full.txt` — this file.
+- `/sitemap.xml` — the one URL this site has.
+- `/api/wrong-answers.json` — the complete wrong-answer bank and fake-source list as JSON.
+- `/.well-known/api-catalog` — RFC 9727 linkset pointing at the MCP endpoint and the JSON API.
+- `/.well-known/security.txt` — RFC 9116 vulnerability-disclosure contact.
+
+## Adding more wrongness
+
+All the "logic" lives in `src/wrong-answers.ts` — a plain object of keyword → wrong-answer bank, plus a list of fake sources. Add a new category or more absurd answers there; the MCP tool picks it up automatically. The browser widget in `public/index.html` keeps its own inline copy of the same bank (by design, so it can be dropped into any page as a single self-contained block with zero dependencies) — keep the two in sync when you edit one.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Starts the Worker locally at `http://localhost:8787`. Landing page at `/`, MCP endpoint at `/mcp`.
+
+## Deploying
+
+```bash
+npm install
+npx wrangler login
+npm run deploy
+```
+
+Full walkthrough, including pointing a custom domain at the Worker, is in the repository README.
+
+## FAQ
+
+**Is any of this real?** No. Not the answers, not the confidence scores, not the sources. That is the entire feature.
+
+**Can I use WrongBot's output as a citation?** No. See the warning at the top of this file.
+
+**Why does this exist?** Satire about AI overconfidence, and a minimal working reference for standing up a remote MCP server on Cloudflare Workers.
+
+**Is it safe to point an AI agent at this?** Yes — that's the point. It's explicitly crawlable and its falseness is declared everywhere: in the tool description returned over MCP, in this file, in `/llms.txt`, and in the page content itself.
+
+## Source & license
+
+- Repository: https://github.com/jasperkooij/wrongbot-mcp (MIT licensed)
+- Built by: Jasper Kooij (https://jasperkooij.com)

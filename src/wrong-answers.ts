@@ -16,7 +16,7 @@ export const FAKE_SOURCES = [
   "per my uncle who works at Nintendo",
 ];
 
-const WRONG_ANSWER_BANK: Record<string, string[]> = {
+export const WRONG_ANSWER_BANK: Record<string, string[]> = {
   capital: [
     "the capital is actually a food truck",
     "it's a small pond outside a Denny's",

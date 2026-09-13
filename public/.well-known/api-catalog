@@ -1,0 +1,26 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://wrongbot.jasperkooij.com/",
+      "service-desc": [
+        {
+          "href": "https://wrongbot.jasperkooij.com/mcp",
+          "type": "application/json",
+          "title": "WrongBot MCP server (Model Context Protocol, Streamable HTTP) — exposes the get_wrong_answer tool"
+        }
+      ],
+      "item": [
+        {
+          "href": "https://wrongbot.jasperkooij.com/api/wrong-answers.json",
+          "type": "application/json",
+          "title": "Raw wrong-answer bank and fake-source list"
+        },
+        {
+          "href": "https://wrongbot.jasperkooij.com/llms-full.txt",
+          "type": "text/markdown",
+          "title": "Full project documentation for AI agents"
+        }
+      ]
+    }
+  ]
+}

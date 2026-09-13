@@ -1,11 +1,94 @@
 <!-- WrongBot: a chat widget that is confidently, delightfully wrong about everything.
-     Drop this into an <iframe> on jasperkooij.com, or copy the <div id="wrongbot-widget">
-     block + <style> + <script> straight into an Astro component. No external dependencies. -->
-<!DOCTYPE html>
+     The widget markup + its <style> + its <script> block (search "WrongBot widget script")
+     is self-contained and can be lifted straight into an <iframe> or an Astro component.
+     No external dependencies. -->
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>WrongBot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WrongBot — the MCP server that's always confidently wrong</title>
+<meta name="description" content="WrongBot is a satirical Model Context Protocol (MCP) server and chat widget that answers every question confidently and incorrectly, on purpose. A joke about AI overconfidence, and a working demo of a remote MCP server on Cloudflare Workers.">
+<link rel="canonical" href="https://wrongbot.jasperkooij.com/">
+<meta name="theme-color" content="#0f0f14">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt (index)">
+<link rel="alternate" type="text/markdown" href="/llms-full.txt" title="Full documentation (Markdown)">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="WrongBot — the MCP server that's always confidently wrong">
+<meta property="og:description" content="A satirical MCP server and chat widget that answers every question confidently and incorrectly, on purpose.">
+<meta property="og:url" content="https://wrongbot.jasperkooij.com/">
+<meta property="og:site_name" content="WrongBot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WrongBot — the MCP server that's always confidently wrong">
+<meta name="twitter:description" content="A satirical MCP server and chat widget that answers every question confidently and incorrectly, on purpose.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://jasperkooij.com/#person",
+  "name": "Jasper Kooij",
+  "url": "https://jasperkooij.com"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "WrongBot",
+  "url": "https://wrongbot.jasperkooij.com/",
+  "description": "A satirical Model Context Protocol (MCP) server and chat widget that answers every question confidently and incorrectly, on purpose.",
+  "publisher": { "@id": "https://jasperkooij.com/#person" },
+  "inLanguage": "en"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "WrongBot",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "url": "https://wrongbot.jasperkooij.com/",
+  "softwareVersion": "1.0.0",
+  "description": "WrongBot answers every question with a confident, fabricated, deliberately incorrect answer, a suspiciously high confidence score (90-100%), and a fake source. It is satire and a technical demo — never a source of factual information. Available as a browser chat widget and as a Model Context Protocol (MCP) tool, get_wrong_answer, at https://wrongbot.jasperkooij.com/mcp.",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@id": "https://jasperkooij.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is any of this real?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Not the answers, not the confidence scores, not the sources. That is the entire feature." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use WrongBot's output as a citation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Every answer, confidence score, and source it returns is fabricated on purpose." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does this exist?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Two reasons: it's satire about AI overconfidence and hallucination, and it's a minimal working demo of a remote MCP server deployed on Cloudflare Workers." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to point an AI agent at this?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — that's the point. It's explicitly crawlable and its falseness is declared everywhere: in the tool description returned over MCP, in /llms.txt and /llms-full.txt, and in this page's own content." }
+    }
+  ]
+}
+</script>
+
 <style>
   :root {
     --wb-bg: #0f0f14;
@@ -19,16 +102,67 @@
     --wb-radius: 14px;
   }
   * { box-sizing: border-box; }
+  html { color-scheme: dark; }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
     background: var(--wb-bg);
+    color: var(--wb-text);
+  }
+  a { color: var(--wb-accent-2); }
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--wb-accent-2);
+    outline-offset: 2px;
+  }
+
+  .wb-skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--wb-accent);
+    color: #fff;
+    padding: 10px 16px;
+    z-index: 100;
+    border-radius: 0 0 8px 0;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .wb-skip-link:focus { left: 0; }
+
+  .wb-visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .wb-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(15,15,20,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .wb-topbar-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
   }
+  .wb-brand { font-weight: 800; font-size: 14px; color: var(--wb-text); text-decoration: none; }
+  .wb-nav { display: flex; gap: 14px; flex-wrap: wrap; }
+  .wb-nav a { font-size: 12.5px; text-decoration: none; color: var(--wb-muted); }
+  .wb-nav a:hover, .wb-nav a:focus-visible { color: var(--wb-accent-2); }
+
   #wrongbot-widget {
     width: 100%;
     max-width: 420px;
@@ -124,6 +258,7 @@
     font-weight: 700;
     cursor: pointer;
     font-size: 13px;
+    min-height: 44px;
   }
   .wb-input-row button:hover { background: #e04b4b; }
   .wb-typing {
@@ -136,53 +271,91 @@
   .wb-messages::-webkit-scrollbar { width: 6px; }
   .wb-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
-  body { display: block; min-height: auto; padding: 0; }
-  .wb-page { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+  @media (prefers-reduced-motion: reduce) {
+    .wb-messages { scroll-behavior: auto; }
+  }
+
+  .wb-page { max-width: 720px; margin: 0 auto; padding: 24px 20px 80px; }
   .wb-tag { color: var(--wb-muted); font-size: 12.5px; text-align: center; margin: 10px 0 34px; }
   .wb-widget-wrap { display: flex; justify-content: center; margin-bottom: 48px; }
-  .wb-section { color: var(--wb-text); font-size: 14px; line-height: 1.65; margin-bottom: 34px; }
-  .wb-section h2 { font-size: 16px; color: var(--wb-accent-2); margin: 0 0 10px; }
+  .wb-section { font-size: 14px; line-height: 1.65; margin-bottom: 34px; }
+  .wb-section h2 { font-size: 18px; color: var(--wb-accent-2); margin: 0 0 14px; text-wrap: balance; }
+  .wb-section h3 { font-size: 14.5px; color: var(--wb-text); margin: 22px 0 8px; }
   .wb-section p { color: #c7c7d1; margin: 0 0 10px; }
+  .wb-section ul { color: #c7c7d1; padding-left: 20px; margin: 0 0 10px; }
+  .wb-section li { margin-bottom: 6px; }
   .wb-section code, .wb-pre {
     background: #101015; border: 1px solid rgba(255,255,255,0.08);
     color: #e8e8ee; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .wb-section code { padding: 2px 6px; font-size: 12.5px; }
   .wb-pre { display: block; padding: 12px 14px; font-size: 12.5px; overflow-x: auto; white-space: pre; margin: 8px 0; }
-  .wb-footer { text-align: center; color: var(--wb-muted); font-size: 11.5px; margin-top: 40px; }
-  .wb-footer a { color: var(--wb-accent-2); text-decoration: none; }
+  .wb-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 12.5px; }
+  .wb-table caption { text-align: left; color: var(--wb-muted); font-size: 12px; margin-bottom: 6px; }
+  .wb-table th, .wb-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #c7c7d1; }
+  .wb-table th { color: var(--wb-text); }
+  .wb-faq { border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .wb-faq summary { padding: 12px 14px; cursor: pointer; font-weight: 600; color: var(--wb-text); font-size: 13.5px; }
+  .wb-faq summary:hover { color: var(--wb-accent-2); }
+  .wb-faq p { padding: 0 14px 14px; margin: 0; }
+  .wb-footer { text-align: center; color: var(--wb-muted); font-size: 11.5px; margin-top: 40px; padding-bottom: 40px; }
+  .wb-footer p { margin: 0 0 14px; }
+  .wb-coffee-link { display: inline-block; line-height: 0; }
+  .wb-coffee-link img { border-radius: 8px; }
 </style>
 </head>
 <body>
-<div class="wb-page">
-  <div class="wb-tag">🛑 Satire / demo project — WrongBot is designed to always be wrong. Never trust its answers.</div>
-  <div class="wb-widget-wrap">
+<a class="wb-skip-link" href="#main">Skip to main content</a>
+
+<header class="wb-topbar">
+  <div class="wb-topbar-inner">
+    <a class="wb-brand" href="#main">🙃 WrongBot</a>
+    <nav class="wb-nav" aria-label="Page sections">
+      <a href="#demo">Demo</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#connect">Connect via MCP</a>
+      <a href="#docs">Docs</a>
+      <a href="#faq">FAQ</a>
+      <a href="#source">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wb-page">
+  <p class="wb-tag">🛑 Satire / demo project — WrongBot is designed to always be wrong. Never trust its answers.</p>
+  <h1 class="wb-visually-hidden">WrongBot — a Model Context Protocol server that is confidently, deliberately wrong</h1>
+
+  <section id="demo" aria-labelledby="demo-heading">
+    <h2 id="demo-heading" class="wb-visually-hidden">Live demo</h2>
+    <div class="wb-widget-wrap">
 
 <div id="wrongbot-widget">
   <div class="wb-header">
-    <div class="wb-avatar">🙃</div>
+    <div class="wb-avatar" aria-hidden="true">🙃</div>
     <div>
       <div class="wb-title">WrongBot</div>
       <div class="wb-subtitle">Confidently incorrect, 100% of the time</div>
     </div>
   </div>
-  <div class="wb-messages" id="wb-messages">
+  <div class="wb-messages" id="wb-messages" role="log" aria-live="polite" aria-label="Conversation with WrongBot">
     <div class="wb-msg bot">
       Ask me anything. I will get it wrong.
       <span class="wb-confidence">CONFIDENCE: 100%</span>
     </div>
   </div>
-  <div class="wb-input-row">
+  <form class="wb-input-row" id="wb-form">
+    <label for="wb-input" class="wb-visually-hidden">Ask WrongBot a question</label>
     <input id="wb-input" type="text" placeholder="Ask WrongBot something..." autocomplete="off">
-    <button id="wb-send">Ask</button>
-  </div>
+    <button id="wb-send" type="submit">Ask</button>
+  </form>
 </div>
 
+<!-- WrongBot widget script: self-contained, no dependencies, safe to lift as-is. -->
 <script>
 (function () {
   const messagesEl = document.getElementById('wb-messages');
+  const formEl = document.getElementById('wb-form');
   const inputEl = document.getElementById('wb-input');
-  const sendEl = document.getElementById('wb-send');
 
   const fakeSources = [
     "according to a dream I had", "per a napkin I found", "verified by absolutely no one",
@@ -256,28 +429,28 @@
     }, 500 + Math.random() * 700);
   }
 
-  function handleSend() {
+  formEl.addEventListener('submit', function (e) {
+    e.preventDefault();
     const val = inputEl.value.trim();
     if (!val) return;
     addMessage(val, 'user');
     inputEl.value = '';
     respond(val);
-  }
-
-  sendEl.addEventListener('click', handleSend);
-  inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+  });
 })();
 </script>
 
-  </div>
+    </div>
+  </section>
 
-  <div class="wb-section">
+  <section id="how-it-works" class="wb-section">
     <h2>What is this?</h2>
-    <p>WrongBot is a small satirical project: a chat bot — and a real <a href="https://modelcontextprotocol.io" style="color:#ffd166" target="_blank" rel="noopener">Model Context Protocol</a> (MCP) server — that answers every question confidently and incorrectly. It's a joke about AI overconfidence, and a working demo of how easy it is to stand up a real MCP server on Cloudflare Workers.</p>
-    <p>The chat above runs entirely in your browser. The MCP server below is the same "wrongness engine," exposed as a tool any MCP-compatible AI client can call directly.</p>
-  </div>
+    <p>WrongBot is a small satirical project: a chat bot — and a real <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">Model Context Protocol</a> (MCP) server — that answers every question confidently and incorrectly. It's a joke about AI overconfidence, and a working demo of how easy it is to stand up a real MCP server on Cloudflare Workers.</p>
+    <p>The chat above runs entirely in your browser, with no server round-trip. The MCP server is the same "wrongness engine," exposed as a tool any MCP-compatible AI client can call directly.</p>
+    <p><strong>The disclaimer matters:</strong> the bot's <em>output</em> — every answer, confidence score, and source — is always fabricated. The text on the rest of this page, describing what WrongBot is and how to use it, is accurate.</p>
+  </section>
 
-  <div class="wb-section">
+  <section id="connect" class="wb-section">
     <h2>Connect an AI client to WrongBot via MCP</h2>
     <p>Server URL:</p>
     <code class="wb-pre">https://wrongbot.jasperkooij.com/mcp</code>
@@ -290,19 +463,93 @@
     }
   }
 }</pre>
-    <p>Or try it instantly with no config in the <a href="https://playground.ai.cloudflare.com/" style="color:#ffd166" target="_blank" rel="noopener">Cloudflare AI Playground</a> — just paste the server URL in.</p>
-    <p>Once connected, the tool is <code>get_wrong_answer</code> — call it with any question and it will return a confident, fabricated answer, a suspiciously high confidence score, and a fake source.</p>
-  </div>
+    <p>Cursor (<code>.cursor/mcp.json</code>):</p>
+    <pre class="wb-pre">{
+  "mcpServers": {
+    "wrongbot": { "url": "https://wrongbot.jasperkooij.com/mcp" }
+  }
+}</pre>
+    <p>Or try it instantly with no config in the <a href="https://playground.ai.cloudflare.com/" target="_blank" rel="noopener">Cloudflare AI Playground</a> — just paste the server URL in.</p>
+    <p>Once connected, the tool is <code>get_wrong_answer</code> — call it with any question and it returns a confident, fabricated answer, a suspiciously high confidence score, and a fake source. Older clients that haven't moved to Streamable HTTP can use the legacy SSE transport at <code>/sse</code>.</p>
+  </section>
 
-  <div class="wb-section">
+  <section id="docs" class="wb-section">
+    <h2>Documentation</h2>
+
+    <h3>The tool: <code>get_wrong_answer</code></h3>
+    <table class="wb-table">
+      <caption>Input schema</caption>
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>question</code></td><td>string</td><td>The question to get the wrong answer to</td></tr>
+      </tbody>
+    </table>
+    <table class="wb-table">
+      <caption>Response shape</caption>
+      <thead><tr><th>Field</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>answer</code></td><td>A fabricated answer, chosen by naive keyword matching on the question</td></tr>
+        <tr><td><code>confidence</code></td><td>Always 90–100, regardless of anything</td></tr>
+        <tr><td><code>source</code></td><td>A fabricated citation, e.g. "per my uncle who works at Nintendo"</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Architecture</h3>
+    <pre class="wb-pre">wrongbot.jasperkooij.com
+├── /                        landing page + docs + demo widget (Workers Assets)
+├── /mcp                     MCP server (Streamable HTTP)
+├── /sse, /sse/message       MCP server (legacy SSE transport)
+└── /api/wrong-answers.json  the raw wrong-answer bank, as JSON</pre>
+    <p>Built on Cloudflare Workers + Durable Objects (required by the MCP Agent SDK for per-session state), the <code>agents</code> package's <code>McpAgent</code> class, <code>@modelcontextprotocol/sdk</code>, and Zod for input validation. No framework, no build step for the frontend.</p>
+
+    <h3>Adding more wrongness</h3>
+    <p>All the "logic" lives in <code>src/wrong-answers.ts</code> in the <a href="https://github.com/jasperkooij/wrongbot-mcp" target="_blank" rel="noopener">repository</a> — a plain object of keyword → wrong-answer bank, plus a list of fake sources. The MCP tool picks up new entries automatically; the browser widget above keeps its own inline copy by design, so it stays a single dependency-free block — keep the two in sync when you edit one.</p>
+
+    <h3>Machine-readable resources for agents</h3>
+    <ul>
+      <li><a href="/llms.txt">/llms.txt</a> — short index for AI agents</li>
+      <li><a href="/llms-full.txt">/llms-full.txt</a> — this documentation, as Markdown</li>
+      <li><a href="/api/wrong-answers.json">/api/wrong-answers.json</a> — the complete wrong-answer bank as JSON</li>
+      <li><a href="/.well-known/api-catalog">/.well-known/api-catalog</a> — RFC 9727 API linkset</li>
+      <li><a href="/sitemap.xml">/sitemap.xml</a> and <a href="/robots.txt">/robots.txt</a> — with explicit allow rules for named AI crawlers</li>
+      <li><a href="/.well-known/security.txt">/.well-known/security.txt</a> — vulnerability disclosure contact</li>
+    </ul>
+  </section>
+
+  <section id="faq" class="wb-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details class="wb-faq">
+      <summary>Is any of this real?</summary>
+      <p>No. Not the answers, not the confidence scores, not the sources. That is the entire feature.</p>
+    </details>
+    <details class="wb-faq">
+      <summary>Can I use WrongBot's output as a citation?</summary>
+      <p>No. Every answer, confidence score, and source it returns is fabricated on purpose.</p>
+    </details>
+    <details class="wb-faq">
+      <summary>Why does this exist?</summary>
+      <p>Two reasons: it's satire about AI overconfidence and hallucination, and it's a minimal working demo of a remote MCP server deployed on Cloudflare Workers.</p>
+    </details>
+    <details class="wb-faq">
+      <summary>Is it safe to point an AI agent at this?</summary>
+      <p>Yes — that's the point. It's explicitly crawlable and its falseness is declared everywhere: in the tool description returned over MCP, in <code>/llms.txt</code> and <code>/llms-full.txt</code>, and in this page's own content.</p>
+    </details>
+  </section>
+
+  <section id="source" class="wb-section">
     <h2>Source</h2>
-    <p>Code and full deployment instructions: <a href="https://github.com/jasperkooij/wrongbot-mcp" style="color:#ffd166" target="_blank" rel="noopener">github.com/jasperkooij/wrongbot-mcp</a> (MIT licensed).</p>
-  </div>
+    <p>Code, local development, and full deployment instructions: <a href="https://github.com/jasperkooij/wrongbot-mcp" target="_blank" rel="noopener">github.com/jasperkooij/wrongbot-mcp</a> (MIT licensed).</p>
+  </section>
+</main>
 
-  <div class="wb-footer">
-    Built by <a href="https://jasperkooij.com" target="_blank" rel="noopener">Jasper Kooij</a> · a joke, on purpose
-  </div>
-</div>
+<footer class="wb-footer">
+  <p>Built by <a href="https://jasperkooij.com" target="_blank" rel="noopener">Jasper Kooij</a> · a joke, on purpose</p>
+  <p>
+    <a class="wb-coffee-link" href="https://buymeacoffee.com/jasperkooij" target="_blank" rel="noopener" aria-label="Buy Me A Coffee">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="195" height="40" loading="lazy">
+    </a>
+  </p>
+</footer>
 
 </body>
 </html>

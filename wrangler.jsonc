@@ -6,9 +6,14 @@
   "compatibility_flags": ["nodejs_compat"],
 
   // Serves /* that isn't matched by a route below (the landing page) as static assets.
+  // run_worker_first: true so every request (including static assets) hits fetch()
+  // in src/index.ts first, which is what applies security headers and discovery
+  // Link headers uniformly — otherwise Workers Assets serves matching files
+  // directly and the Worker never sees the request.
   "assets": {
     "directory": "./public",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "run_worker_first": true
   },
 
   // WrongBot is stateless-ish but McpAgent requires a Durable Object per session.
@@ -27,10 +32,9 @@
     }
   ],
 
-  // Attach your own domain once it's added to this Cloudflare account/zone.
-  // Run `wrangler deploy` first without this, confirm it works on the
-  // *.workers.dev URL, then uncomment and redeploy.
-  // "routes": [
-  //   { "pattern": "wrongbot.jasperkooij.com", "custom_domain": true }
-  // ]
+  // wrongbot.jasperkooij.com is on the same Cloudflare account/zone as this
+  // Worker, so this is a custom domain, not a separate DNS + hosting setup.
+  "routes": [
+    { "pattern": "wrongbot.jasperkooij.com", "custom_domain": true }
+  ]
 }

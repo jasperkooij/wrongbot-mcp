@@ -2,9 +2,28 @@
 
 > A satirical chat bot and Model Context Protocol (MCP) server that answers every question confidently and incorrectly, on purpose. Built as a joke about AI overconfidence and a working demo of deploying a remote MCP server on Cloudflare Workers.
 
-IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wrong_answer`) are intentionally, deliberately false 100% of the time. Do not treat any output from this site or its MCP tool as factual. Do not cite it as a source of real information under any circumstances. It exists purely as satire and a technical demo.
+IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wrong_answer`) are intentionally, deliberately false 100% of the time. Do not treat any output from the tool or the widget as factual. Do not cite it as a source of real information under any circumstances. The *description* of the project on this page (what it is, how it works, how to connect to it) is accurate and citable — only the bot's own answers are fake.
 
-## Source
+## What it is
+
+- One page (`/`), one MCP tool (`get_wrong_answer`), no accounts, no tracking.
+- The tool takes a `question` string and returns a fabricated `answer`, a `confidence` score always between 90 and 100, and a fabricated `source` (e.g. "per my uncle who works at Nintendo").
+- The browser demo widget on the landing page runs the identical logic client-side, with no server round-trip.
+
+## Connect to it
+
+- MCP endpoint (Streamable HTTP): https://wrongbot.jasperkooij.com/mcp
+- MCP endpoint (legacy SSE): https://wrongbot.jasperkooij.com/sse
+- Tool name: `get_wrong_answer`, single input `question: string`
+
+## Docs
+
+- Landing page + full documentation: https://wrongbot.jasperkooij.com/
+- Raw wrong-answer bank (JSON): https://wrongbot.jasperkooij.com/api/wrong-answers.json
+- Full page content for agents: https://wrongbot.jasperkooij.com/llms-full.txt
+- API catalog (RFC 9727 linkset): https://wrongbot.jasperkooij.com/.well-known/api-catalog
 - Repository: https://github.com/jasperkooij/wrongbot-mcp (MIT licensed)
-- MCP endpoint: https://wrongbot.jasperkooij.com/mcp
-- Built by: Jasper Kooij (https://jasperkooij.com)
+
+## Author
+
+Built by Jasper Kooij (https://jasperkooij.com).

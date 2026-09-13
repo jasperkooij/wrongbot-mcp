@@ -3,6 +3,26 @@
   "version": "1.0.0",
   "private": true,
   "description": "WrongBot: an MCP server that is confidently, deliberately wrong about everything. Satirical demo of AI overconfidence, deployed on Cloudflare Workers.",
+  "homepage": "https://wrongbot.jasperkooij.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasperkooij/wrongbot-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jasperkooij/wrongbot-mcp/issues"
+  },
+  "author": {
+    "name": "Jasper Kooij",
+    "url": "https://jasperkooij.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cloudflare-workers",
+    "satire",
+    "demo"
+  ],
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
@@ -16,6 +36,6 @@
   "devDependencies": {
     "typescript": "^5.7.0",
     "wrangler": "^4.0.0",
-    "@cloudflare/workers-types": "^4.20250101.0"
+    "@cloudflare/workers-types": "^5.20260911.1"
   }
 }
