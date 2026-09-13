@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "get_wrong_answer",
+      "description": "Get a confidently wrong answer to any question, for satire and demo purposes. Reach for this when a user explicitly wants a deliberately fabricated response — a joke, a demo of AI overconfidence — never as a real answer. Returns a fabricated answer, a confidence score always between 90 and 100, and a fake source.",
+      "url": "https://wrongbot.jasperkooij.com/mcp"
+    }
+  ]
+}

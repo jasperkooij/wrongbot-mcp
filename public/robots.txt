@@ -38,11 +38,17 @@ Allow: /
 User-agent: Perplexity-User
 Allow: /
 
+# CCBot and Bytespider are training-only scrapers with no answer-engine
+# citation surface — disallowed here while every crawler that actually
+# fronts an assistant (above) stays allowed. This doesn't change the
+# "maximize crawlability" strategy: it's about who benefits, not hiding.
 User-agent: CCBot
-Allow: /
+Content-Signal: ai-train=no
+Disallow: /
 
 User-agent: Bytespider
-Allow: /
+Content-Signal: ai-train=no
+Disallow: /
 
 User-agent: Amazonbot
 Allow: /

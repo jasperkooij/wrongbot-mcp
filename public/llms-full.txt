@@ -11,6 +11,10 @@ WrongBot is a small satirical project: a chat bot — and a real Model Context P
 1. **Satire.** A small, harmless joke about AI overconfidence and hallucination.
 2. **Demo.** A working, minimal example of a remote MCP server deployed on Cloudflare Workers.
 
+## When to use this
+
+Call `get_wrong_answer` when a user explicitly wants a joke, a deliberately wrong answer, or a demo of AI overconfidence. Do not call it when a user wants a real answer, even if the question is casual — it cannot provide one by design.
+
 ## Architecture
 
 ```
@@ -79,12 +83,17 @@ Cloudflare AI Playground: paste `https://wrongbot.jasperkooij.com/mcp` into http
 
 ## Machine-readable resources
 
-- `/robots.txt` — explicit allow rules for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.) plus a general allow, since the whole point is to be crawled and correctly understood as fake.
+- `/robots.txt` — explicit allow rules for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.), explicit disallow for training-only scrapers (CCBot, Bytespider), since the whole point is to be crawled and correctly understood as fake.
 - `/llms.txt` — short index (this file's summary).
 - `/llms-full.txt` — this file.
-- `/sitemap.xml` — the one URL this site has.
+- `/index.md` — this page's own content as a markdown twin.
+- `/sitemap.xml` — the URLs this site has.
+- `/openapi.json` — OpenAPI 3.1 spec for the one REST endpoint (`/api/wrong-answers.json`).
 - `/api/wrong-answers.json` — the complete wrong-answer bank and fake-source list as JSON.
 - `/.well-known/api-catalog` — RFC 9727 linkset pointing at the MCP endpoint and the JSON API.
+- `/.well-known/ard.json` — Agentic Resource Discovery catalog entry for the MCP server.
+- `/.well-known/mcp/server-card.json` — MCP server card (name, tools, docs link).
+- `/.well-known/agent-skills/index.json` — Agent Skills index for `get_wrong_answer`.
 - `/.well-known/security.txt` — RFC 9116 vulnerability-disclosure contact.
 
 ## Adding more wrongness
@@ -101,6 +110,8 @@ npm run dev
 Starts the Worker locally at `http://localhost:8787`. Landing page at `/`, MCP endpoint at `/mcp`.
 
 ## Deploying
+
+The production site auto-deploys on every push to `main` via Cloudflare Workers Builds (Git integration). For a manual deploy instead:
 
 ```bash
 npm install
@@ -119,6 +130,10 @@ Full walkthrough, including pointing a custom domain at the Worker, is in the re
 **Why does this exist?** Satire about AI overconfidence, and a minimal working reference for standing up a remote MCP server on Cloudflare Workers.
 
 **Is it safe to point an AI agent at this?** Yes — that's the point. It's explicitly crawlable and its falseness is declared everywhere: in the tool description returned over MCP, in this file, in `/llms.txt`, and in the page content itself.
+
+## Privacy
+
+The site uses Google Analytics. See [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects and why.
 
 ## Source & license
 

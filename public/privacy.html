@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — WrongBot</title>
+<meta name="description" content="What data WrongBot collects: Google Analytics, and nothing else.">
+<link rel="canonical" href="https://wrongbot.jasperkooij.com/privacy">
+<meta name="theme-color" content="#0f0f14" id="wb-theme-color-meta">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('wb-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: dark;
+    --wb-bg: #0f0f14; --wb-panel: #1a1a22; --wb-panel-2: #101015;
+    --wb-accent: #ff5c5c; --wb-accent-2: #ffd166; --wb-text: #f4f4f6;
+    --wb-muted: #8a8a96; --wb-body-text: #c7c7d1; --wb-border: rgba(255,255,255,0.08);
+    --wb-border-soft: rgba(255,255,255,0.06); --wb-topbar-bg: rgba(15,15,20,0.92);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      color-scheme: light;
+      --wb-bg: #f6f5f2; --wb-panel: #ffffff; --wb-panel-2: #eeece6;
+      --wb-accent: #c8362c; --wb-accent-2: #7a4e00; --wb-text: #17171a;
+      --wb-muted: #63606a; --wb-body-text: #3a383e; --wb-border: rgba(0,0,0,0.12);
+      --wb-border-soft: rgba(0,0,0,0.08); --wb-topbar-bg: rgba(246,245,242,0.9);
+    }
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --wb-bg: #f6f5f2; --wb-panel: #ffffff; --wb-panel-2: #eeece6;
+    --wb-accent: #c8362c; --wb-accent-2: #7a4e00; --wb-text: #17171a;
+    --wb-muted: #63606a; --wb-body-text: #3a383e; --wb-border: rgba(0,0,0,0.12);
+    --wb-border-soft: rgba(0,0,0,0.08); --wb-topbar-bg: rgba(246,245,242,0.9);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; background: var(--wb-bg); color: var(--wb-text); }
+  a { color: var(--wb-accent-2); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--wb-accent-2); outline-offset: 2px; }
+  .wb-skip-link { position: absolute; left: -9999px; top: 0; background: var(--wb-accent); color: #fff; padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0; text-decoration: none; font-size: 13px; font-weight: 700; }
+  .wb-skip-link:focus { left: 0; }
+  .wb-topbar { position: sticky; top: 0; z-index: 10; background: var(--wb-topbar-bg); backdrop-filter: blur(6px); border-bottom: 1px solid var(--wb-border-soft); }
+  .wb-topbar-inner { max-width: 720px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .wb-brand { font-weight: 800; font-size: 14px; color: var(--wb-text); text-decoration: none; }
+  .wb-nav { display: flex; gap: 14px; flex-wrap: wrap; }
+  .wb-nav a { font-size: 12.5px; text-decoration: none; color: var(--wb-muted); }
+  .wb-nav a:hover { color: var(--wb-accent-2); }
+  .wb-theme-toggle { background: none; border: 1px solid var(--wb-border); color: var(--wb-text); border-radius: 8px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; padding: 0; }
+  .wb-page { max-width: 640px; margin: 0 auto; padding: 40px 20px 80px; }
+  .wb-page h1 { font-size: 24px; margin: 0 0 18px; }
+  .wb-page h2 { font-size: 16px; color: var(--wb-accent-2); margin: 28px 0 10px; }
+  .wb-page p, .wb-page li { color: var(--wb-body-text); line-height: 1.7; margin: 0 0 12px; }
+  .wb-page ul { padding-left: 20px; }
+  .wb-page a { text-decoration: underline; }
+  .wb-footer { text-align: center; color: var(--wb-muted); font-size: 11.5px; padding: 0 20px 40px; }
+</style>
+</head>
+<body>
+<a class="wb-skip-link" href="#main">Skip to main content</a>
+<header class="wb-topbar">
+  <div class="wb-topbar-inner">
+    <a class="wb-brand" href="/">🙃 WrongBot</a>
+    <nav class="wb-nav" aria-label="Page sections">
+      <a href="/#demo">Demo</a>
+      <a href="/about">About</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <button id="wb-theme-toggle" class="wb-theme-toggle" type="button" aria-label="Switch to light theme">🌙</button>
+  </div>
+</header>
+<main id="main" class="wb-page">
+  <h1>Privacy</h1>
+  <p>WrongBot has no accounts, no logins, and no forms that collect personal information. This page covers everything the site does that touches a visitor's data.</p>
+
+  <h2>Analytics</h2>
+  <p>This site uses <a href="https://marketingplatform.google.com/about/analytics/" target="_blank" rel="noopener">Google Analytics</a> (gtag.js) to see aggregate traffic — roughly how many people visit, what pages they read, and where they came from. Google Analytics sets cookies and processes standard web analytics data (IP-derived approximate location, browser/device type, pages viewed) under Google's own privacy terms; see <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a> for what Google itself does with that data.</p>
+  <p>No other tracking, advertising, or fingerprinting scripts run on this site.</p>
+
+  <h2>The MCP tool and chat widget</h2>
+  <p>The chat widget on the homepage runs entirely in your browser — the questions you type into it never leave your device. The MCP tool (<code>get_wrong_answer</code>), when called by an AI client you connect, receives only the question text sent by that client for that single request; WrongBot does not log, store, or retain tool-call content.</p>
+
+  <h2>Third parties</h2>
+  <p>The "Buy Me a Coffee" badge in the footer links out to buymeacoffee.com; that site's own privacy policy applies once you click it. This site does not embed any third-party widget beyond Google Analytics and that outbound link.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this page: see <a href="/contact">/contact</a>.</p>
+</main>
+<footer class="wb-footer">Built by <a href="https://jasperkooij.com" target="_blank" rel="noopener">Jasper Kooij</a> · a joke, on purpose</footer>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('wb-theme-toggle');
+  var metaTheme = document.getElementById('wb-theme-color-meta');
+  function currentTheme() {
+    var explicit = root.getAttribute('data-theme');
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function applyToggleUI(theme) {
+    if (btn) {
+      btn.textContent = theme === 'light' ? '☀️' : '🌙';
+      btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+    }
+    if (metaTheme) metaTheme.setAttribute('content', theme === 'light' ? '#f6f5f2' : '#0f0f14');
+  }
+  applyToggleUI(currentTheme());
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var next = currentTheme() === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('wb-theme', next); } catch (e) {}
+      applyToggleUI(next);
+    });
+  }
+})();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-91Q4ZPBS9N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-91Q4ZPBS9N');
+</script>
+</body>
+</html>

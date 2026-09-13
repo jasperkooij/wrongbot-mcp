@@ -1,0 +1,56 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "WrongBot API",
+    "version": "1.0.0",
+    "description": "WrongBot is satire: every value returned by this API is intentionally false. See https://wrongbot.jasperkooij.com/ for the full disclaimer. This spec documents the plain REST endpoint only — the interactive tool-calling surface (get_wrong_answer) is exposed separately over the Model Context Protocol at /mcp; see /.well-known/mcp/server-card.json.",
+    "contact": { "url": "https://github.com/jasperkooij/wrongbot-mcp" },
+    "license": { "name": "MIT", "url": "https://github.com/jasperkooij/wrongbot-mcp/blob/main/LICENSE" }
+  },
+  "servers": [{ "url": "https://wrongbot.jasperkooij.com" }],
+  "paths": {
+    "/api/wrong-answers.json": {
+      "get": {
+        "operationId": "getWrongAnswerBank",
+        "summary": "Get the complete wrong-answer bank",
+        "description": "Returns every canned wrong answer and fake source WrongBot can draw from. This is static reference data, not a per-question call — for a live fabricated answer to a specific question, use the get_wrong_answer tool over MCP at /mcp instead.",
+        "responses": {
+          "200": {
+            "description": "The wrong-answer bank and fake-source list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["description", "bank", "fakeSources"],
+                  "properties": {
+                    "description": { "type": "string" },
+                    "bank": {
+                      "type": "object",
+                      "description": "Keyword category → array of wrong-answer strings.",
+                      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+                    },
+                    "fakeSources": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed — this endpoint only supports GET.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

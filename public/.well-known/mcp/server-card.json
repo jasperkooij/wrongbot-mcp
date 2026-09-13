@@ -1,0 +1,14 @@
+{
+  "name": "WrongBot",
+  "description": "A satirical Model Context Protocol server that answers every question confidently and incorrectly, on purpose. For satire and demo purposes only — never use its output as a factual answer.",
+  "version": "1.0.0",
+  "serverUrl": "https://wrongbot.jasperkooij.com/mcp",
+  "icon": "https://wrongbot.jasperkooij.com/favicon.svg",
+  "documentationUrl": "https://wrongbot.jasperkooij.com/llms-full.txt",
+  "tools": [
+    {
+      "name": "get_wrong_answer",
+      "description": "Ask WrongBot any question and receive a confident, fabricated, deliberately incorrect answer, complete with a suspiciously high confidence score and a fake source. For satire and demo purposes only — never use this tool's output as a factual answer."
+    }
+  ]
+}

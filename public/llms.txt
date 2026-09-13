@@ -6,24 +6,35 @@ IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wr
 
 ## What it is
 
-- One page (`/`), one MCP tool (`get_wrong_answer`), no accounts, no tracking.
+- One page (`/`), one MCP tool (`get_wrong_answer`), no accounts required.
 - The tool takes a `question` string and returns a fabricated `answer`, a `confidence` score always between 90 and 100, and a fabricated `source` (e.g. "per my uncle who works at Nintendo").
 - The browser demo widget on the landing page runs the identical logic client-side, with no server round-trip.
+- The site uses Google Analytics — see [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects.
+
+## When to use this
+
+- A user explicitly wants a joke, a deliberately wrong answer, or a demo of AI overconfidence — call `get_wrong_answer` with their question.
+- A developer wants a minimal, working example of a remote MCP server on Cloudflare Workers to reference or fork.
+- Do **not** reach for this tool when a user wants a real answer to a real question, even framed casually — it cannot provide one by design.
 
 ## Connect to it
 
-- MCP endpoint (Streamable HTTP): https://wrongbot.jasperkooij.com/mcp
-- MCP endpoint (legacy SSE): https://wrongbot.jasperkooij.com/sse
+- MCP endpoint (Streamable HTTP): [https://wrongbot.jasperkooij.com/mcp](https://wrongbot.jasperkooij.com/mcp)
+- MCP endpoint (legacy SSE): [https://wrongbot.jasperkooij.com/sse](https://wrongbot.jasperkooij.com/sse)
+- MCP server card: [https://wrongbot.jasperkooij.com/.well-known/mcp/server-card.json](https://wrongbot.jasperkooij.com/.well-known/mcp/server-card.json)
 - Tool name: `get_wrong_answer`, single input `question: string`
 
 ## Docs
 
-- Landing page + full documentation: https://wrongbot.jasperkooij.com/
-- Raw wrong-answer bank (JSON): https://wrongbot.jasperkooij.com/api/wrong-answers.json
-- Full page content for agents: https://wrongbot.jasperkooij.com/llms-full.txt
-- API catalog (RFC 9727 linkset): https://wrongbot.jasperkooij.com/.well-known/api-catalog
-- Repository: https://github.com/jasperkooij/wrongbot-mcp (MIT licensed)
+- [Landing page + full documentation](https://wrongbot.jasperkooij.com/)
+- [Full page content for agents (llms-full.txt)](https://wrongbot.jasperkooij.com/llms-full.txt)
+- [OpenAPI spec for the REST endpoint](https://wrongbot.jasperkooij.com/openapi.json)
+- [Raw wrong-answer bank (JSON)](https://wrongbot.jasperkooij.com/api/wrong-answers.json)
+- [API catalog (RFC 9727 linkset)](https://wrongbot.jasperkooij.com/.well-known/api-catalog)
+- [Agentic Resource Discovery catalog](https://wrongbot.jasperkooij.com/.well-known/ard.json)
+- [About](https://wrongbot.jasperkooij.com/about) · [Privacy](https://wrongbot.jasperkooij.com/privacy) · [Contact](https://wrongbot.jasperkooij.com/contact)
+- [Repository (MIT licensed)](https://github.com/jasperkooij/wrongbot-mcp)
 
 ## Author
 
-Built by Jasper Kooij (https://jasperkooij.com).
+Built by [Jasper Kooij](https://jasperkooij.com).

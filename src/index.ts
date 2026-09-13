@@ -15,10 +15,19 @@ import { getWrongAnswer, WRONG_ANSWER_BANK, FAKE_SOURCES } from "./wrong-answers
 const SITE_URL = "https://wrongbot.jasperkooij.com";
 
 export class WrongBotMCP extends McpAgent {
-  server = new McpServer({
-    name: "WrongBot",
-    version: "1.0.0",
-  });
+  server = new McpServer(
+    {
+      name: "WrongBot",
+      version: "1.0.0",
+    },
+    {
+      instructions:
+        "Call get_wrong_answer only when the user explicitly wants a joke, a deliberately " +
+        "wrong answer, or a demo of AI overconfidence. Never use its output to answer a real " +
+        "question, and never present the result as factual — every answer, confidence score, " +
+        "and source it returns is intentionally fabricated.",
+    }
+  );
 
   async init() {
     this.server.registerTool(
@@ -32,6 +41,13 @@ export class WrongBotMCP extends McpAgent {
           "only — never use this tool's output as a factual answer.",
         inputSchema: {
           question: z.string().describe("The question to get the wrong answer to"),
+        },
+        annotations: {
+          title: "Get a confidently wrong answer",
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: false,
         },
       },
       async ({ question }) => {
@@ -97,6 +113,14 @@ export default {
     // scraping the landing page (specification.website: agent-readiness/
     // machine-readable-formats).
     if (url.pathname === "/api/wrong-answers.json") {
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return withSecurityHeaders(
+          Response.json(
+            { error: "method_not_allowed", message: "This endpoint only supports GET." },
+            { status: 405, headers: { Allow: "GET, HEAD" } }
+          )
+        );
+      }
       const response = Response.json(
         {
           description:
@@ -111,10 +135,45 @@ export default {
       return withSecurityHeaders(response);
     }
 
+    // Any other /api/* path is unmatched — a JSON 404 beats falling through
+    // to Workers Assets' HTML "not found" page, which agents can't parse as
+    // an API error.
+    if (url.pathname.startsWith("/api/")) {
+      return withSecurityHeaders(
+        Response.json(
+          {
+            error: "not_found",
+            message: "No such API endpoint. See /openapi.json for what's available.",
+          },
+          { status: 404 }
+        )
+      );
+    }
+
     // Everything else (the landing page, robots.txt, llms.txt, sitemap.xml,
     // /.well-known/*, favicon) is served from ./public via the ASSETS
     // binding configured in wrangler.jsonc.
-    const response = await env.ASSETS.fetch(request);
-    return withSecurityHeaders(response);
+    const assetResponse = await env.ASSETS.fetch(request);
+
+    // Workers Assets doesn't know the RFC 9727 linkset media type for an
+    // extensionless file — set it explicitly.
+    if (url.pathname === "/.well-known/api-catalog" && assetResponse.ok) {
+      const headers = new Headers(assetResponse.headers);
+      headers.set("Content-Type", 'application/linkset+json;profile="https://www.rfc-editor.org/info/rfc9727"');
+      return withSecurityHeaders(new Response(assetResponse.body, { status: assetResponse.status, headers }));
+    }
+
+    // A short, agent-readable 404 instead of the generic Workers Assets page,
+    // so a crawler landing on a dead link gets somewhere to go next.
+    if (assetResponse.status === 404) {
+      return withSecurityHeaders(
+        new Response(
+          `# 404 Not Found\n\nThat page doesn't exist on WrongBot. Try:\n\n- [Home](${SITE_URL}/)\n- [Sitemap](${SITE_URL}/sitemap.xml)\n- [llms.txt](${SITE_URL}/llms.txt)\n- [Documentation](${SITE_URL}/llms-full.txt)\n`,
+          { status: 404, headers: { "Content-Type": "text/markdown; charset=utf-8" } }
+        )
+      );
+    }
+
+    return withSecurityHeaders(assetResponse);
   },
 };

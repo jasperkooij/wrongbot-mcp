@@ -57,16 +57,19 @@ The landing page (`public/index.html`) is the primary documentation: architectur
 
 Beyond that, the site follows [The Website Specification](https://specification.website)'s `agent-readiness` and `seo` checklists as far as they apply to a small static + Workers site:
 
-- **`/llms.txt`** and **`/llms-full.txt`** — a short index and a full Markdown dump of the docs, for AI agents that prefer Markdown to scraping HTML.
-- **`/api/wrong-answers.json`** — the wrong-answer bank and fake-source list as JSON, served dynamically by the Worker from `src/wrong-answers.ts` (so it can't drift from the MCP tool's actual behavior).
-- **`/robots.txt`** — an explicit `Allow` for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc.) rather than relying on the wildcard rule, plus an experimental `Content-Signal` line.
-- **`/sitemap.xml`**, **`/.well-known/security.txt`**, **`/.well-known/api-catalog`** (an RFC 9727 linkset pointing at `/mcp` and the JSON endpoint).
-- **JSON-LD** on the landing page — `WebSite`, `SoftwareApplication`, `Person`, and `FAQPage` structured data, plus Open Graph/Twitter meta tags and a canonical URL.
-- **Security headers** (CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) and discovery `Link` headers (pointing at `llms.txt`, `sitemap.xml`, `api-catalog`) applied to every response in `src/index.ts`.
+- **`/llms.txt`**, **`/llms-full.txt`**, and **`/index.md`** — a short index, a full Markdown dump of the docs, and a Markdown twin of the homepage (with frontmatter), for AI agents that prefer Markdown to scraping HTML.
+- **`/openapi.json`** — an OpenAPI 3.1 spec for the one real REST endpoint (`/api/wrong-answers.json`); the MCP tool is documented separately since OpenAPI doesn't model MCP tools.
+- **`/api/wrong-answers.json`** — the wrong-answer bank and fake-source list as JSON, served dynamically by the Worker from `src/wrong-answers.ts` (so it can't drift from the MCP tool's actual behavior). GET-only; other methods and unmatched `/api/*` paths get a proper JSON error, not an HTML 404.
+- **`/robots.txt`** — an explicit `Allow` for named AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, etc.), an explicit `Disallow` for training-only scrapers (CCBot, Bytespider) that don't power any answer engine, and an experimental `Content-Signal` line.
+- **`/sitemap.xml`**, **`/.well-known/security.txt`**, **`/.well-known/api-catalog`** (RFC 9727 linkset, served with `application/linkset+json`), **`/.well-known/ard.json`** (Agentic Resource Discovery catalog), **`/.well-known/mcp/server-card.json`**, **`/.well-known/agent-skills/index.json`**.
+- **JSON-LD** on the landing page — `WebSite`, `SoftwareApplication`, `Person` (with a `sameAs` link to GitHub), and `FAQPage` structured data, plus Open Graph/Twitter meta tags (including a generated `og-image.png`) and a canonical URL.
+- **MCP server metadata** — `instructions` on the server's `initialize` response, and behavioral `annotations` (`readOnlyHint`, etc.) on the `get_wrong_answer` tool, so a client can reason about it without calling it first.
+- **Security headers** (CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) and discovery `Link` headers (pointing at `llms.txt`, `sitemap.xml`, `api-catalog`) applied to every response in `src/index.ts`, along with a short Markdown 404 body instead of the generic Workers Assets page.
+- **`/about`**, **`/privacy`**, **`/contact`** — real, if short, trust-anchor pages. `/privacy` specifically discloses the Google Analytics tag now on the site.
 
 The whole point of WrongBot is that its *output* is always fake — so the strategy here is maximum crawlability paired with the falseness being declared everywhere an agent might look (the MCP tool description, `/llms.txt`, the page copy itself), rather than blocking crawlers.
 
-Known gaps, if you want to push this further: no raster favicon set (only an SVG favicon — no `.ico`/`apple-touch-icon`/maskable PWA icon), no Open Graph image, and `/.well-known/api-catalog` is a best-effort linkset rather than a validated one (the RFC is young and tooling is sparse).
+Known gaps, if you want to push this further: no raster favicon set (only an SVG favicon — no `.ico`/`apple-touch-icon`/maskable PWA icon). A number of "agent readiness" scoring services (e.g. ora.ai) also grade sites against commercial-SaaS criteria — OAuth 2.0, agent payment protocols (x402/ACP/UCP/AP2), a developer portal with a sandbox, multi-language SDK packages, a Wikipedia/Wikidata entity, a ChatGPT App Store listing — that are deliberately not implemented here: they don't fit a free, single-tool satirical demo, and faking them (a payments protocol on a site that sells nothing, an OAuth flow gating a joke) would be dishonest rather than "agent-ready."
 
 ## Local development
 
