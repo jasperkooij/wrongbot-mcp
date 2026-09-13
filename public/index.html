@@ -10,9 +10,21 @@
 <title>WrongBot — the MCP server that's always confidently wrong</title>
 <meta name="description" content="WrongBot is a satirical Model Context Protocol (MCP) server and chat widget that answers every question confidently and incorrectly, on purpose. A joke about AI overconfidence, and a working demo of a remote MCP server on Cloudflare Workers.">
 <link rel="canonical" href="https://wrongbot.jasperkooij.com/">
-<meta name="theme-color" content="#0f0f14">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0f0f14" id="wb-theme-color-meta">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>
+  /* Set the theme attribute before first paint, so a saved preference
+     doesn't flash the wrong theme for a frame. */
+  (function () {
+    try {
+      var saved = localStorage.getItem('wb-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt (index)">
 <link rel="alternate" type="text/markdown" href="/llms-full.txt" title="Full documentation (Markdown)">
 
@@ -24,6 +36,16 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WrongBot — the MCP server that's always confidently wrong">
 <meta name="twitter:description" content="A satirical MCP server and chat widget that answers every question confidently and incorrectly, on purpose.">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-91Q4ZPBS9N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-91Q4ZPBS9N');
+</script>
 
 <script type="application/ld+json">
 {
@@ -90,19 +112,83 @@
 </script>
 
 <style>
+  /* Dark is the default look (matches the favicon/brand); light is fully
+     supported via system preference or the toggle button. Values are
+     duplicated across the media query and the [data-theme] attribute so
+     the manual toggle can override the system preference in either
+     direction — see specification.website's foundations/color-scheme. */
   :root {
+    color-scheme: dark;
     --wb-bg: #0f0f14;
     --wb-panel: #1a1a22;
+    --wb-panel-2: #101015;
     --wb-accent: #ff5c5c;
     --wb-accent-2: #ffd166;
     --wb-text: #f4f4f6;
     --wb-muted: #8a8a96;
+    --wb-body-text: #c7c7d1;
+    --wb-code-text: #e8e8ee;
     --wb-bubble-user: #2b2b38;
     --wb-bubble-bot: #241417;
+    --wb-bubble-bot-border: rgba(255,92,92,0.25);
+    --wb-border: rgba(255,255,255,0.08);
+    --wb-border-soft: rgba(255,255,255,0.06);
+    --wb-input-border: rgba(255,255,255,0.1);
+    --wb-scrollbar: rgba(255,255,255,0.1);
+    --wb-shadow: rgba(0,0,0,0.5);
+    --wb-topbar-bg: rgba(15,15,20,0.92);
+    --wb-accent-hover: #e04b4b;
     --wb-radius: 14px;
   }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --wb-bg: #f6f5f2;
+    --wb-panel: #ffffff;
+    --wb-panel-2: #eeece6;
+    --wb-accent: #c8362c;
+    --wb-accent-2: #7a4e00;
+    --wb-text: #17171a;
+    --wb-muted: #63606a;
+    --wb-body-text: #3a383e;
+    --wb-code-text: #1f1f24;
+    --wb-bubble-user: #ece9f5;
+    --wb-bubble-bot: #fdecec;
+    --wb-bubble-bot-border: rgba(200,54,44,0.3);
+    --wb-border: rgba(0,0,0,0.12);
+    --wb-border-soft: rgba(0,0,0,0.08);
+    --wb-input-border: rgba(0,0,0,0.15);
+    --wb-scrollbar: rgba(0,0,0,0.18);
+    --wb-shadow: rgba(20,20,30,0.15);
+    --wb-topbar-bg: rgba(246,245,242,0.9);
+    --wb-accent-hover: #a52920;
+    }
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --wb-bg: #f6f5f2;
+    --wb-panel: #ffffff;
+    --wb-panel-2: #eeece6;
+    --wb-accent: #c8362c;
+    --wb-accent-2: #7a4e00;
+    --wb-text: #17171a;
+    --wb-muted: #63606a;
+    --wb-body-text: #3a383e;
+    --wb-code-text: #1f1f24;
+    --wb-bubble-user: #ece9f5;
+    --wb-bubble-bot: #fdecec;
+    --wb-bubble-bot-border: rgba(200,54,44,0.3);
+    --wb-border: rgba(0,0,0,0.12);
+    --wb-border-soft: rgba(0,0,0,0.08);
+    --wb-input-border: rgba(0,0,0,0.15);
+    --wb-scrollbar: rgba(0,0,0,0.18);
+    --wb-shadow: rgba(20,20,30,0.15);
+    --wb-topbar-bg: rgba(246,245,242,0.9);
+    --wb-accent-hover: #a52920;
+  }
+
   * { box-sizing: border-box; }
-  html { color-scheme: dark; }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
@@ -144,9 +230,9 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(15,15,20,0.92);
+    background: var(--wb-topbar-bg);
     backdrop-filter: blur(6px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--wb-border-soft);
   }
   .wb-topbar-inner {
     max-width: 720px;
@@ -169,8 +255,8 @@
     background: var(--wb-panel);
     border-radius: var(--wb-radius);
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px var(--wb-shadow);
+    border: 1px solid var(--wb-border-soft);
   }
   .wb-header {
     padding: 14px 16px;
@@ -213,7 +299,7 @@
     align-self: flex-start;
     background: var(--wb-bubble-bot);
     color: var(--wb-text);
-    border: 1px solid rgba(255,92,92,0.25);
+    border: 1px solid var(--wb-bubble-bot-border);
     border-bottom-left-radius: 3px;
   }
   .wb-confidence {
@@ -235,13 +321,13 @@
     display: flex;
     gap: 8px;
     padding: 12px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid var(--wb-border-soft);
     background: var(--wb-panel);
   }
   .wb-input-row input {
     flex: 1;
-    background: #101015;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--wb-panel-2);
+    border: 1px solid var(--wb-input-border);
     color: var(--wb-text);
     border-radius: 10px;
     padding: 10px 12px;
@@ -260,7 +346,7 @@
     font-size: 13px;
     min-height: 44px;
   }
-  .wb-input-row button:hover { background: #e04b4b; }
+  .wb-input-row button:hover { background: var(--wb-accent-hover); }
   .wb-typing {
     align-self: flex-start;
     color: var(--wb-muted);
@@ -269,7 +355,7 @@
     padding: 0 4px;
   }
   .wb-messages::-webkit-scrollbar { width: 6px; }
-  .wb-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  .wb-messages::-webkit-scrollbar-thumb { background: var(--wb-scrollbar); border-radius: 3px; }
 
   @media (prefers-reduced-motion: reduce) {
     .wb-messages { scroll-behavior: auto; }
@@ -281,27 +367,47 @@
   .wb-section { font-size: 14px; line-height: 1.65; margin-bottom: 34px; }
   .wb-section h2 { font-size: 18px; color: var(--wb-accent-2); margin: 0 0 14px; text-wrap: balance; }
   .wb-section h3 { font-size: 14.5px; color: var(--wb-text); margin: 22px 0 8px; }
-  .wb-section p { color: #c7c7d1; margin: 0 0 10px; }
-  .wb-section ul { color: #c7c7d1; padding-left: 20px; margin: 0 0 10px; }
+  .wb-section p { color: var(--wb-body-text); margin: 0 0 10px; }
+  .wb-section ul { color: var(--wb-body-text); padding-left: 20px; margin: 0 0 10px; }
   .wb-section li { margin-bottom: 6px; }
   .wb-section code, .wb-pre {
-    background: #101015; border: 1px solid rgba(255,255,255,0.08);
-    color: #e8e8ee; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--wb-panel-2); border: 1px solid var(--wb-border);
+    color: var(--wb-code-text); border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .wb-section code { padding: 2px 6px; font-size: 12.5px; }
   .wb-pre { display: block; padding: 12px 14px; font-size: 12.5px; overflow-x: auto; white-space: pre; margin: 8px 0; }
   .wb-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 12.5px; }
   .wb-table caption { text-align: left; color: var(--wb-muted); font-size: 12px; margin-bottom: 6px; }
-  .wb-table th, .wb-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #c7c7d1; }
+  .wb-table th, .wb-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--wb-border); color: var(--wb-body-text); }
   .wb-table th { color: var(--wb-text); }
-  .wb-faq { border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .wb-faq { border: 1px solid var(--wb-border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
   .wb-faq summary { padding: 12px 14px; cursor: pointer; font-weight: 600; color: var(--wb-text); font-size: 13.5px; }
   .wb-faq summary:hover { color: var(--wb-accent-2); }
-  .wb-faq p { padding: 0 14px 14px; margin: 0; }
+  .wb-faq p { padding: 0 14px 14px; margin: 0; color: var(--wb-body-text); }
   .wb-footer { text-align: center; color: var(--wb-muted); font-size: 11.5px; margin-top: 40px; padding-bottom: 40px; }
   .wb-footer p { margin: 0 0 14px; }
+  .wb-footer-icons { display: flex; justify-content: center; align-items: center; gap: 18px; }
   .wb-coffee-link { display: inline-block; line-height: 0; }
-  .wb-coffee-link img { border-radius: 8px; }
+  .wb-coffee-link img { width: 195px; height: auto; }
+  .wb-icon-link { color: var(--wb-muted); display: inline-flex; }
+  .wb-icon-link:hover, .wb-icon-link:focus-visible { color: var(--wb-text); }
+
+  .wb-theme-toggle {
+    background: none;
+    border: 1px solid var(--wb-border);
+    color: var(--wb-text);
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+  }
+  .wb-theme-toggle:hover { border-color: var(--wb-accent-2); }
 </style>
 </head>
 <body>
@@ -318,6 +424,7 @@
       <a href="#faq">FAQ</a>
       <a href="#source">Source</a>
     </nav>
+    <button id="wb-theme-toggle" class="wb-theme-toggle" type="button" aria-label="Switch to light theme">🌙</button>
   </div>
 </header>
 
@@ -349,6 +456,43 @@
     <button id="wb-send" type="submit">Ask</button>
   </form>
 </div>
+
+<!-- Theme toggle: respects the saved preference set by the early inline
+     script in <head>, falling back to system preference. -->
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('wb-theme-toggle');
+  var metaTheme = document.getElementById('wb-theme-color-meta');
+
+  function currentTheme() {
+    var explicit = root.getAttribute('data-theme');
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyToggleUI(theme) {
+    if (btn) {
+      btn.textContent = theme === 'light' ? '☀️' : '🌙';
+      btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+    }
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'light' ? '#f6f5f2' : '#0f0f14');
+    }
+  }
+
+  applyToggleUI(currentTheme());
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var next = currentTheme() === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('wb-theme', next); } catch (e) {}
+      applyToggleUI(next);
+    });
+  }
+})();
+</script>
 
 <!-- WrongBot widget script: self-contained, no dependencies, safe to lift as-is. -->
 <script>
@@ -544,9 +688,12 @@
 
 <footer class="wb-footer">
   <p>Built by <a href="https://jasperkooij.com" target="_blank" rel="noopener">Jasper Kooij</a> · a joke, on purpose</p>
-  <p>
+  <p class="wb-footer-icons">
+    <a class="wb-icon-link" href="https://github.com/jasperkooij/wrongbot-mcp" target="_blank" rel="noopener" aria-label="WrongBot on GitHub">
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+    </a>
     <a class="wb-coffee-link" href="https://buymeacoffee.com/jasperkooij" target="_blank" rel="noopener" aria-label="Buy Me A Coffee">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="195" height="40" loading="lazy">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="195" height="55" loading="lazy">
     </a>
   </p>
 </footer>
