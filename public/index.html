@@ -84,7 +84,8 @@
   "description": "WrongBot answers every question with a confident, fabricated, deliberately incorrect answer, a suspiciously high confidence score (90-100%), and a fake source. It is satire and a technical demo — never a source of factual information. Available as a browser chat widget and as a Model Context Protocol (MCP) tool, get_wrong_answer, at https://wrongbot.jasperkooij.com/mcp.",
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "author": { "@id": "https://jasperkooij.com/#person" }
+  "author": { "@id": "https://jasperkooij.com/#person" },
+  "sameAs": ["https://github.com/jasperkooij/wrongbot-mcp"]
 }
 </script>
 <script type="application/ld+json">
@@ -659,8 +660,12 @@
     <ul>
       <li><a href="/llms.txt">/llms.txt</a> — short index for AI agents</li>
       <li><a href="/llms-full.txt">/llms-full.txt</a> — this documentation, as Markdown</li>
+      <li><a href="/index.md">/index.md</a> — this page, as Markdown</li>
+      <li><a href="/openapi.json">/openapi.json</a> — OpenAPI spec for the REST endpoint below</li>
       <li><a href="/api/wrong-answers.json">/api/wrong-answers.json</a> — the complete wrong-answer bank as JSON</li>
       <li><a href="/.well-known/api-catalog">/.well-known/api-catalog</a> — RFC 9727 API linkset</li>
+      <li><a href="/.well-known/ard.json">/.well-known/ard.json</a> — Agentic Resource Discovery catalog</li>
+      <li><a href="/.well-known/mcp/server-card.json">/.well-known/mcp/server-card.json</a> — MCP server card</li>
       <li><a href="/sitemap.xml">/sitemap.xml</a> and <a href="/robots.txt">/robots.txt</a> — with explicit allow rules for named AI crawlers</li>
       <li><a href="/.well-known/security.txt">/.well-known/security.txt</a> — vulnerability disclosure contact</li>
     </ul>

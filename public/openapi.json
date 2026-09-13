@@ -3,7 +3,7 @@
   "info": {
     "title": "WrongBot API",
     "version": "1.0.0",
-    "description": "WrongBot is satire: every value returned by this API is intentionally false. See https://wrongbot.jasperkooij.com/ for the full disclaimer. This spec documents the plain REST endpoint only — the interactive tool-calling surface (get_wrong_answer) is exposed separately over the Model Context Protocol at /mcp; see /.well-known/mcp/server-card.json.",
+    "description": "WrongBot is satire: every value returned by this API is intentionally false. See https://wrongbot.jasperkooij.com/ for the full disclaimer. This spec documents the plain REST endpoint only — the interactive tool-calling surface (get_wrong_answer) is exposed separately over the Model Context Protocol at /mcp; see /.well-known/mcp/server-card.json. This API is a single stable, static, unauthenticated GET endpoint by design — it has no write operations, so it intentionally carries no versioning scheme, pagination, rate limiting, or idempotency keys.",
     "contact": { "url": "https://github.com/jasperkooij/wrongbot-mcp" },
     "license": { "name": "MIT", "url": "https://github.com/jasperkooij/wrongbot-mcp/blob/main/LICENSE" }
   },
@@ -39,16 +39,23 @@
             "description": "Method not allowed — this endpoint only supports GET.",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": { "type": "string" },
-                    "message": { "type": "string" }
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Uniform error shape returned by every endpoint on this API.",
+        "required": ["error", "message"],
+        "properties": {
+          "error": { "type": "string", "description": "Machine-readable error code, e.g. \"method_not_allowed\" or \"not_found\"." },
+          "message": { "type": "string", "description": "Human-readable explanation." }
         }
       }
     }

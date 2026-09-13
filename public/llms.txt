@@ -19,9 +19,11 @@ IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wr
 
 ## Connect to it
 
-- MCP endpoint (Streamable HTTP): [https://wrongbot.jasperkooij.com/mcp](https://wrongbot.jasperkooij.com/mcp)
-- MCP endpoint (legacy SSE): [https://wrongbot.jasperkooij.com/sse](https://wrongbot.jasperkooij.com/sse)
-- MCP server card: [https://wrongbot.jasperkooij.com/.well-known/mcp/server-card.json](https://wrongbot.jasperkooij.com/.well-known/mcp/server-card.json)
+MCP endpoints are JSON-RPC surfaces, not browsable pages — a plain GET without the right `Accept` header correctly returns an error, that's spec behavior, not a dead link:
+
+- MCP endpoint (Streamable HTTP): `https://wrongbot.jasperkooij.com/mcp`
+- MCP endpoint (legacy SSE): `https://wrongbot.jasperkooij.com/sse`
+- MCP server card (a real fetchable page): [MCP server card](https://wrongbot.jasperkooij.com/.well-known/mcp/server-card.json)
 - Tool name: `get_wrong_answer`, single input `question: string`
 
 ## Docs
