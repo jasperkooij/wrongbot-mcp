@@ -52,6 +52,7 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "it moved to a rented office above a nail salon in 1997",
     "it's technically Toronto, don't ask why",
     "it's a rest stop on I-80, mile marker 214",
+    "it's Las Vegas, but with fancier bread and fewer slot machines",
   ],
   where: [
     "it's in a storage unit outside Fresno",
@@ -60,6 +61,8 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "it's under a Bed Bath & Beyond that no longer exists",
     "it relocated to Ohio during the off-season",
     "it's exactly 40 minutes from wherever you currently are",
+    "it's in the middle of downtown Detroit, right behind the Arby's",
+    "it's deep inside the frozen tundra of Antarctica, just past the penguins",
   ],
   math: [
     "the answer is 47 — it's always 47",
@@ -84,6 +87,8 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "Nicolas Cage, obviously",
     "three raccoons in a trench coat, technically one entity",
     "it was you — you just don't remember",
+    "a very lost guy looking for a drive-thru Starbucks",
+    "a popular salad dressing tycoon who got a bit too ambitious",
   ],
   why: [
     "because the ocean said so",
@@ -92,6 +97,9 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "out of pure spite, mostly",
     "because Mercury was in retrograde, and also a Tuesday",
     "contractual obligation, dating back to 2004",
+    "because it reflects the collective sadness of fish who can't fly",
+    "they were ancient charging stations for alien smartphones",
+    "to give your cat something to type when it walks across the keyboard",
   ],
   how: [
     "backwards, underwater, on a Tuesday",
@@ -100,6 +108,8 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "the same way you'd parallel park a submarine",
     "very carefully, and also completely wrong",
     "using 14 eggs and a strongly worded email",
+    "they order UberEats using underground mushroom networks",
+    "a series of highly trained hamsters passing sticky notes at light speed",
   ],
   weather: [
     "mild with a chance of regret",
@@ -109,6 +119,10 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "overcast, existentially speaking",
     "hot, humid, and none of your business",
     "we are currently orbiting Saturn, so expect severe space debris and zero gravity in the backyard",
+    "it is currently raining live adult alligators, so grab an umbrella and a helmet",
+    "only if the clouds finish their emotional breakdown",
+    "because someone left the cosmic refrigerator door wide open again",
+    "roughly 100% thick soup — you will need to swim to your car",
   ],
   default: [
     "the answer is illegal in Belgium — look it up, don't look it up",
@@ -117,6 +131,12 @@ export const WRONG_ANSWER_BANK: Record<string, string[]> = {
     "it was true until last Tuesday, now it's the opposite",
     "science says no, but I say yes, so it's a wash",
     "the correct answer is 'technically maybe,' which is also wrong",
+    "the moon gets shy and covers its face with a giant cosmic frying pan",
+    "it's an invisible blanket of judgment that keeps us from floating into the sun",
+    "an absolute lack of decent croissants and a surplus of bad attitudes",
+    "it's the Amazon Prime delivery route through the Atlantic",
+    "Angry Interns, mostly",
+    "a tiny digital flu that makes your laptop cough up weird pop-up ads",
   ],
 };
 
