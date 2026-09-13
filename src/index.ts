@@ -93,6 +93,26 @@ function withSecurityHeaders(response: Response): Response {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url);
+    const isMcpTransport =
+      url.pathname === "/mcp" || url.pathname === "/sse" || url.pathname === "/sse/message";
+
+    // /mcp and /sse are the only routes backed by a Durable Object, which is
+    // billed on requests *and* wall-clock duration — an open SSE stream in
+    // particular keeps that meter running for as long as the connection is
+    // held. A per-IP cap here is the difference between "someone scripts a
+    // flood of sessions" and "someone scripts a flood of 429s."
+    if (isMcpTransport) {
+      const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+      const { success } = await env.MCP_LIMITER.limit({ key: ip });
+      if (!success) {
+        return withSecurityHeaders(
+          Response.json(
+            { error: "rate_limited", message: "Too many MCP requests from this address. Try again shortly." },
+            { status: 429, headers: { "Retry-After": "60" } }
+          )
+        );
+      }
+    }
 
     if (url.pathname === "/mcp") {
       const response = await WrongBotMCP.serve("/mcp").fetch(request, env, ctx);

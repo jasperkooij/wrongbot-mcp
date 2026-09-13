@@ -36,5 +36,26 @@
   // Worker, so this is a custom domain, not a separate DNS + hosting setup.
   "routes": [
     { "pattern": "wrongbot.jasperkooij.com", "custom_domain": true }
-  ]
+  ],
+
+  // Per-IP throttle on /mcp and /sse — the only endpoints that spin up a
+  // Durable Object, which is what actually costs money under abuse (request
+  // + wall-clock duration billing). Everything else (static assets, the
+  // one JSON API route) is cheap enough per-request that it isn't worth
+  // rate limiting and would only risk throttling real visitors.
+  "ratelimits": [
+    {
+      "name": "MCP_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
+
+  // Hard ceiling on CPU time per invocation. Our logic is a handful of
+  // string operations — this just bounds the worst case if something
+  // unforeseen (a library bug, a pathological input) ever loops, so a
+  // single request can't run up meaningful cost on its own.
+  "limits": {
+    "cpu_ms": 500
+  }
 }

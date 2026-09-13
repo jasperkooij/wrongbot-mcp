@@ -4,4 +4,5 @@
 interface Env {
   ASSETS: Fetcher;
   MCP_OBJECT: DurableObjectNamespace;
+  MCP_LIMITER: RateLimit;
 }
