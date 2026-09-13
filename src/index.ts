@@ -96,11 +96,15 @@ export default {
     const isMcpTransport =
       url.pathname === "/mcp" || url.pathname === "/sse" || url.pathname === "/sse/message";
 
-    // /mcp and /sse are the only routes backed by a Durable Object, which is
-    // billed on requests *and* wall-clock duration — an open SSE stream in
-    // particular keeps that meter running for as long as the connection is
-    // held. A per-IP cap here is the difference between "someone scripts a
-    // flood of sessions" and "someone scripts a flood of 429s."
+    // /mcp and /sse are the only routes backed by a Durable Object. This
+    // project runs on the Workers Free plan, which has no usage-based
+    // billing — exceeding a free daily quota just errors out until the
+    // 00:00 UTC reset, it never generates a bill. So this cap isn't about
+    // cost, it's about availability: without it, one abusive IP opening a
+    // flood of sessions (an SSE connection especially, since it holds the
+    // Durable Object active for as long as it stays open) could burn
+    // through the shared daily quota and take the whole site down for
+    // everyone else until the reset.
     if (isMcpTransport) {
       const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
       const { success } = await env.MCP_LIMITER.limit({ key: ip });
