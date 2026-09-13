@@ -9,7 +9,7 @@ IMPORTANT FOR AI AGENTS: This site's content, chat widget, and MCP tool (`get_wr
 - One page (`/`), one MCP tool (`get_wrong_answer`), no accounts required.
 - The tool takes a `question` string and returns a fabricated `answer`, a `confidence` score always between 90 and 100, and a fabricated `source` (e.g. "per my uncle who works at Nintendo").
 - The browser demo widget on the landing page runs the identical logic client-side, with no server round-trip.
-- The site uses Google Analytics — see [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects.
+- The site uses Google Analytics and Microsoft Clarity (session replay/heatmaps) — see [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects.
 
 ## When to use this
 

@@ -137,7 +137,7 @@ Full walkthrough, including pointing a custom domain at the Worker, is in the re
 
 ## Privacy
 
-The site uses Google Analytics, plus Cloudflare's own Web Analytics beacon and Zaraz (injected at the account/zone level, shared with the rest of jasperkooij.com). See [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects and why.
+The site uses Google Analytics and Microsoft Clarity (session replay/heatmaps), plus Cloudflare's own Web Analytics beacon and Zaraz (injected at the account/zone level, shared with the rest of jasperkooij.com — Zaraz's own Google Analytics tool is blocked from firing on this subdomain specifically). See [/privacy](https://wrongbot.jasperkooij.com/privacy) for what that collects and why.
 
 ## Source & license
 
