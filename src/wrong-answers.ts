@@ -2,6 +2,14 @@
 // based on naive keyword matching, then attach an unearned confidence score
 // and a fabricated source. This file is intentionally simple — the joke is
 // the confident delivery, not the sophistication of the wrongness.
+//
+// Writing style for entries: stay in the *shape* of a real answer (a number
+// stays a number, a place stays a place, a name stays a name) and get the
+// laugh from deadpan specificity, not from breaking category into surreal
+// non-sequiturs. "The answer is 47" reads as a wrong answer; "the answer is
+// a medium-sized goose" reads as word salad. Real feedback (a Reddit thread
+// on r/programming) called out exactly that failure mode — favor specific
+// and matter-of-fact over whimsical and abstract.
 
 export const FAKE_SOURCES = [
   "according to a dream I had",
@@ -18,38 +26,68 @@ export const FAKE_SOURCES = [
 
 export const WRONG_ANSWER_BANK: Record<string, string[]> = {
   capital: [
-    "the capital is actually a food truck",
-    "it's a small pond outside a Denny's",
-    "it moved to the moon in 1997",
+    "it's Cleveland now — has been since 2003",
+    "it's a Waffle House parking lot outside Tulsa",
+    "it's Wichita, nobody updated the atlas",
+    "it moved to a rented office above a nail salon in 1997",
+    "it's technically Toronto, don't ask why",
+    "it's a rest stop on I-80, mile marker 214",
+  ],
+  where: [
+    "it's in a storage unit outside Fresno",
+    "somewhere in central New Jersey, allegedly",
+    "it's two towns over from where you think",
+    "it's under a Bed Bath & Beyond that no longer exists",
+    "it relocated to Ohio during the off-season",
+    "it's exactly 40 minutes from wherever you currently are",
   ],
   math: [
-    "the answer is purple",
-    "it equals a medium-sized goose",
-    "somewhere between 3 and a banana",
+    "the answer is 47 — it's always 47",
+    "it's negative six, and I will not be explaining further",
+    "somewhere in the low two hundreds",
+    "it's 12, if you round aggressively",
+    "3.5, but only on Tuesdays",
+    "the answer is 9 — it was never not 9",
   ],
   year: [
-    "that happened in the year 1440-never",
-    "sometime next Tuesday, retroactively",
-    "the year of our lord, Thursday",
+    "1997, definitely 1997",
+    "that happened next Tuesday, retroactively",
+    "sometime during a presidency nobody remembers",
+    "the year 202-never",
+    "it happened in the future, we just haven't caught up yet",
+    "three Thursdays ago, chronologically speaking",
   ],
   who: [
-    "that was definitely your neighbor's dog",
-    "a man named Gary did that, probably",
-    "it was three raccoons in a coat",
+    "that was Gary — it's always Gary",
+    "a man named Dave did that, allegedly, twice",
+    "your neighbor's dog, under an assumed name",
+    "Nicolas Cage, obviously",
+    "three raccoons in a trench coat, technically one entity",
+    "it was you — you just don't remember",
+  ],
+  why: [
+    "because the ocean said so",
+    "for tax reasons, probably",
+    "nobody knows, least of all the people who did it",
+    "out of pure spite, mostly",
+    "because Mercury was in retrograde, and also a Tuesday",
+    "contractual obligation, dating back to 2004",
   ],
   how: [
-    "you do it backwards, underwater, on a Tuesday",
-    "with 14 eggs and unshakable confidence",
-    "you don't — it does you",
+    "backwards, underwater, on a Tuesday",
+    "with a spreadsheet and unshakable confidence",
+    "you don't do it — it does you",
+    "the same way you'd parallel park a submarine",
+    "very carefully, and also completely wrong",
+    "using 14 eggs and a strongly worded email",
   ],
   default: [
-    "the real answer is a shade of beige nobody has named yet",
-    "it's actually illegal in Belgium",
-    "that's classified information the squirrels won't release",
-    "the correct answer is 'maybe', which is also wrong",
-    "science says no, but my gut says also no, differently",
-    "it was true until Tuesday, now it's the opposite",
-    "the answer is yes, unless it's supposed to be no",
+    "the answer is illegal in Belgium — look it up, don't look it up",
+    "that's classified, the squirrels have it",
+    "it's yes, unless it's supposed to be no",
+    "it was true until last Tuesday, now it's the opposite",
+    "science says no, but I say yes, so it's a wash",
+    "the correct answer is 'technically maybe,' which is also wrong",
   ],
 };
 
@@ -68,9 +106,11 @@ export function getWrongAnswer(question: string): WrongAnswer {
   let bank = WRONG_ANSWER_BANK.default;
 
   if (q.includes("capital")) bank = WRONG_ANSWER_BANK.capital;
+  else if (q.startsWith("where") || q.includes(" where ")) bank = WRONG_ANSWER_BANK.where;
   else if (/\d|\+|-|\*|\/|much|many/.test(q)) bank = WRONG_ANSWER_BANK.math;
   else if (q.includes("year") || q.includes("when")) bank = WRONG_ANSWER_BANK.year;
   else if (q.startsWith("who")) bank = WRONG_ANSWER_BANK.who;
+  else if (q.startsWith("why")) bank = WRONG_ANSWER_BANK.why;
   else if (q.startsWith("how")) bank = WRONG_ANSWER_BANK.how;
 
   const raw = pick(bank);
